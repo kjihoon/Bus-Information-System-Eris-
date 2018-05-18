@@ -18,16 +18,12 @@ public class DriverServiceImpl implements DriverService{
      
     @Override
     public List<Map<String, Object>> selectDriverList(Map<String, Object> map) throws Exception {
-    	
-    	
     	log.debug("in service");
         return driverDAO.selectDriverList(map);
     }
     
     @Override
     public Map<String, Object> selectDriverOne(Map<String, Object> map) throws Exception {
-    	
-    	
     	log.debug("in service");
         return driverDAO.selectDriverOne(map);
     }

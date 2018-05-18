@@ -65,7 +65,7 @@ var ctx = document.getElementById("myAreaChart");
 
 
 // -- Bar Chart Example
-var ctx = document.getElementById("myBarChart");
+/*var ctx = document.getElementById("myBarChart");
 var myLineChart = new Chart(ctx, {
   type: 'bar',
   data: {
@@ -107,7 +107,7 @@ var myLineChart = new Chart(ctx, {
   }
 });
 
-
+*/
 
 // -- Pie Chart Example
 var ctx = document.getElementById("myPieChart");
