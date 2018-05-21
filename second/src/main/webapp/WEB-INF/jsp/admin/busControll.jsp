@@ -3,57 +3,71 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
-<title>Insert title here</title>
-</head>
+<style>
+body {
+  background-color: #1abc9c;
+}
+
+.arrows {
+  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  transform: translate(-50%, -50%);
+}
+
+.arrows:before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-left: 26.66667px solid rgba(0, 0, 0, 0.7);
+  border-bottom: 26.66667px solid rgba(0, 0, 0, 0.7);
+  transform: translate(26.66667px, 106.66667px) rotate(-45deg);
+  animation: arrows 1.5s linear infinite;
+}
+
+.arrows:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-left: 26.66667px solid rgba(0, 0, 0, 0.7);
+  border-bottom: 26.66667px solid rgba(0, 0, 0, 0.7);
+  transform: translate(53.33333px, 0px) rotate(-45deg);
+  animation: arrows 1.5s linear infinite -0.75s;
+}
+
+@keyframes arrows {
+  0% {
+    border-left: 26.66667px solid transparent;
+    border-bottom: 26.66667px solid transparent;
+    transform: translate(-13.33333px, -53.33333px) rotate(-45deg);
+  }
+  10%, 90% {
+    border-left: 26.66667px solid transparent;
+    border-bottom: 26.66667px solid transparent;
+  }
+  50% {
+    border-left: 26.66667px solid rgba(0, 0, 0, 0.7);
+    border-bottom: 26.66667px solid rgba(0, 0, 0, 0.7);
+    transform: translate(-13.33333px, 0px) rotate(-45deg);
+  }
+  100% {
+    border-left: 26.66667px solid transparent;
+    border-bottom: 26.66667px solid transparent;
+    transform: translate(-13.33333px, 53.33333px) rotate(-45deg);
+  }
+}
+</style>
 <body>
-<textarea id="textareaid"></textarea>
-<a href="#" onclick="insertAtCaret('textareaid', 'text to insert');return false;">Click Here to Insert</a>
+<div class="arrows"></div>
+
+
+
 </body>
-
-<script>
-function insertAtCaret(areaId, text) {
-	  var txtarea = document.getElementById(areaId);
-	  if (!txtarea) {
-	    return;
-	  }
-
-	  var scrollPos = txtarea.scrollTop;
-	  var strPos = 0;
-	  var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ?
-	    "ff" : (document.selection ? "ie" : false));
-	  if (br == "ie") {
-	    txtarea.focus();
-	    var range = document.selection.createRange();
-	    range.moveStart('character', -txtarea.value.length);
-	    strPos = range.text.length;
-	  } else if (br == "ff") {
-	    strPos = txtarea.selectionStart;
-	  }
-
-	  var front = (txtarea.value).substring(0, strPos);
-	  var back = (txtarea.value).substring(strPos, txtarea.value.length);
-	  txtarea.value = front + text + back;
-	  strPos = strPos + text.length;
-	  if (br == "ie") {
-	    txtarea.focus();
-	    var ieRange = document.selection.createRange();
-	    ieRange.moveStart('character', -txtarea.value.length);
-	    ieRange.moveStart('character', strPos);
-	    ieRange.moveEnd('character', 0);
-	    ieRange.select();
-	  } else if (br == "ff") {
-	    txtarea.selectionStart = strPos;
-	    txtarea.selectionEnd = strPos;
-	    txtarea.focus();
-	  }
-
-	  txtarea.scrollTop = scrollPos;
-	}
-
-
-</script>
 </html>

@@ -76,7 +76,7 @@ public class AdminController {
 		//actual data
 		JSONObject location = new JSONObject();
 		CommandMap cmd = new CommandMap();
-		cmd.put("busidx", busidx);
+		cmd.put("BUSIDX", busidx);
 		Map map = busService.selectBusOne(cmd.getMap());		
 		location.put("lat", map.get("LAT"));
 		location.put("lng", map.get("LON"));
@@ -102,7 +102,7 @@ public class AdminController {
 		//actual value
 		JSONObject tempjo = new JSONObject();
 		CommandMap cmd = new CommandMap();
-		cmd.put("busidx", busidx);
+		cmd.put("BUSIDX", busidx);
 		Map map = busService.selectBusOne(cmd.getMap());
 		//tempjo.put("temp", value)
 		
@@ -117,7 +117,7 @@ public class AdminController {
 		model.addAttribute("center","testdash");			
 		session.setAttribute("busidx", busidx);		
 		CommandMap check = new CommandMap();		
-		check.put("busidx", busidx);			
+		check.put("BUSIDX", busidx);			
 		Map map = busService.selectBusOne(check.getMap());
 		session.setAttribute("busInfo",map);	
 		return "admin/main";
@@ -170,6 +170,38 @@ public class AdminController {
 	
 	
 	
+	////////////////////////////////////////////////외부접속//////////////////////////////////////////////////////
+	//Driver 운행 시작
+	@RequestMapping("admin/buson.do")
+	@ResponseBody
+	public String buson(CommandMap cmd) throws Exception {
+		cmd.put("SERVICE","1");
+		busService.updateBus(cmd.getMap());
+		return "busOn";
+	}
+	
+	//Driver 운행 종료
+	@RequestMapping("admin/busoff.do")
+	@ResponseBody
+	public String busoff(CommandMap cmd) throws Exception {
+		cmd.put("SERVICE","0");
+		cmd.put("LAT", "0");
+		cmd.put("LON", "0");
+		cmd.put("TEMP", "0");
+		cmd.put("HUMID", "0");
+		cmd.put("DRIVERIDX", "0");
+		busService.updateBus(cmd.getMap());
+		return "busOFF";
+	}
+	
+	@RequestMapping("admin/busrealtime.do")
+	@ResponseBody
+	public String busrealtime(CommandMap cmd) throws Exception {
+		cmd.put("realtime","on");
+		busService.updateBus(cmd.getMap());
+		return "busOn";
+	}
+	//////////////////////////////////////////////////////////////////////////////////////
 	
 	
 	

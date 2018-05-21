@@ -28,4 +28,8 @@ public class BusDAO extends AbstractDAO{
 			log.debug("in dao");
 			insert("bus.insertBus", map);	    	
 		}
+		public void updateBus(Map<String, Object> map) throws Exception{
+		    update("bus.updateBus", map);
+		}
+
 }

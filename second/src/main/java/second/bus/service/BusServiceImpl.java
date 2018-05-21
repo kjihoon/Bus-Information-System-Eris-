@@ -31,5 +31,11 @@ public class BusServiceImpl implements BusService{
 		log.debug("in service");
 		BusDAO.insertBus(map);
 	}
+	@Override
+	public void updateBus(Map<String, Object> map) throws Exception{
+		log.debug("in service");
+		BusDAO.updateBus(map);
+	}
+
  
 }

@@ -18,6 +18,12 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
 			return true;
 		}else if(path.equals("/admin/loginimp.do")) {
 			return true;
+		}else if(path.equals("/admin/buson.do")) {
+			return true;
+		}else if(path.equals("/admin/busoff.do")) {
+			return true;
+		}else if(path.equals("/admin/busrealtime.do")) {
+			return true;
 		}else {  
 			@SuppressWarnings("unchecked") 
 			Map<String, Object> userMap = (Map<String, Object>) request.getSession().getAttribute("adminInfo");	 	 
