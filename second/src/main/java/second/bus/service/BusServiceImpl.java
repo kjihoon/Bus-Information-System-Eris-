@@ -25,5 +25,11 @@ public class BusServiceImpl implements BusService{
     	log.debug("in service");
         return BusDAO.selectBusOne(map);
     }
+
+	@Override
+	public void insertBus(Map<String, Object> map) throws Exception {
+		log.debug("in service");
+		BusDAO.insertBus(map);
+	}
  
 }

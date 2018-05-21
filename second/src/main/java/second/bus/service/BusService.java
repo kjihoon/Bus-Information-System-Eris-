@@ -9,6 +9,6 @@ public interface BusService {
 	
 	List<Map<String, Object>> selectBusList(Map<String, Object> map) throws Exception;
 	Map<String, Object> selectBusOne(Map<String, Object> map) throws Exception;
-	
+	void insertBus(Map<String, Object> map) throws Exception;
 	
 }

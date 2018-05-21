@@ -13,7 +13,7 @@ public class BusDAO extends AbstractDAO{
 		@SuppressWarnings("unchecked")
 	    public List<Map<String, Object>> selectBusList(Map<String, Object> map) throws Exception{
 			log.debug("in dao");
-	        return (List<Map<String, Object>>) selectList("bus.selectBusList", map);
+	        return (List<Map<String, Object>>) selectList("bus.selectBusList",map);
 	    }
 		
 		
@@ -22,5 +22,10 @@ public class BusDAO extends AbstractDAO{
 			log.debug("in dao");
 	        return (Map<String, Object>) selectOne("bus.selectBusOne", map);
 	    	
-	}
+		}
+		
+		public void insertBus(Map<String, Object> map) throws Exception{
+			log.debug("in dao");
+			insert("bus.insertBus", map);	    	
+		}
 }

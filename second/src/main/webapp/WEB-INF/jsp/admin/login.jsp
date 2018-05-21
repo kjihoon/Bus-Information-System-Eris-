@@ -27,18 +27,18 @@
 <body class="bg-dark">
   <div class="container">
     <div class="card card-login mx-auto mt-5">
-      <div class="card-header">Admin Account Login</div>
+      <div class="card-header">관리자 계정 로그인</div>
       <div class="card-body">
         
         
         <form action="loginimp.do" id="adminlogin" method="post">
           <div class="form-group">
             <label for="exampleInputEmail1">ID</label>
-            <input class="form-control" id="exampleInputEmail1" type="text" aria-describedby="emailHelp" placeholder="Enter ID" name="id">
+            <input class="form-control" id="exampleInputEmail1" type="text" aria-describedby="emailHelp" placeholder="ID 입력" name="id">
           </div>
           <div class="form-group">
             <label for="exampleInputPassword1">Password</label>
-            <input class="form-control" id="exampleInputPassword1" type="password" placeholder="Password" name="pwd">
+            <input class="form-control" id="exampleInputPassword1" type="password" placeholder="비밀번호 입력" name="pwd">
           </div>
           <div class="form-group">
             <div class="form-check">
@@ -52,12 +52,29 @@
        
        
         <div class="text-center">
-          <a class="d-block small mt-3" href="register.html">Register an Account</a>
-          <a class="d-block small" href="forgot-password.html">Forgot Password?</a>
+       <!--    <a class="d-block small mt-3" href="register.html">Register an Account</a> -->
+           <a class="nav-link" data-toggle="modal" data-target="#forgot">
+            <i class="fa fa-fw fa-sign-out"></i>ID,PWD를 잊으셨너요?</a>
         </div>
       </div>
     </div>
   </div>
+  
+  <!--forgot model  -->
+  <div class="modal fade" id="forgot" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">서버 관리 연락처</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">닫기</span>
+            </button>
+          </div>
+          <div class="modal-body">010-xxx-xxxx로 연락 부탁드립니다. (서버팀: 곽지훈)</div>
+
+        </div>
+      </div>
+    </div>
     <!-- Bootstrap core JavaScript-->
     <script src="../adminBoot/admin_vendor/jquery/jquery.min.js"></script>
     <script src="../adminBoot/admin_vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

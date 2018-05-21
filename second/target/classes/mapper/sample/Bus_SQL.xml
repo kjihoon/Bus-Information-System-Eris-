@@ -4,14 +4,27 @@
 <mapper namespace="bus">
 
 	<select id="selectBusList" parameterType="hashmap"
-		resultType="hashmap">        
-            select * from bus
+		resultType="hashmap">
+        
+            select * from bus 
+            <if test="service ==null">
+    			where service = '1'
+  			</if>
+
 	</select>
-	
+		
 	<select id="selectBusOne" parameterType="hashmap"
 		resultType="hashmap">        
-            select * from bus where busidx =#{busidx}   
+            <![CDATA[
+            select * from bus where busidx =#{busidx}
+            ]]>   
 	</select>
+	
+	<insert id="insertBus" parameterType="hashmap">
+		<![CDATA[
+		insert into bus values (seq_busidx.nextval,#{NUM},#{PLATENUM},#{BUSTYPE},#{BUSENERGY},'0','37','127','0','0',#{YEAR},'0','0','0',SYSDATE)
+		]]>
+	</insert>
 	
 
 </mapper>

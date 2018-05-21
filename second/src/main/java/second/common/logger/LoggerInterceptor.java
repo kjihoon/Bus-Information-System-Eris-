@@ -10,7 +10,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class LoggerInterceptor extends HandlerInterceptorAdapter {
     protected Log log = LogFactory.getLog(LoggerInterceptor.class);
-     
+    
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (log.isDebugEnabled()) {
@@ -22,7 +22,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
      
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        if (log.isDebugEnabled()) {
+    	if (log.isDebugEnabled()) {
             log.debug("======================================           END          ======================================\n");
         }
     }

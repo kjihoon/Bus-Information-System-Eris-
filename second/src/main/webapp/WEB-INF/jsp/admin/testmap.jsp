@@ -22,20 +22,8 @@
 window.lat =37;
 window.lng =127;
 function circlePoint(time) {
-	var a=null;
-	$.ajax({
 
-		url:'location.do',
-		async: false,
-	    success:function(data){
-	    	a = JSON.parse(data);
-	    	window.lat =a.lat;
-	    	window.lng =a.lng;
-	    },
-	    error:function(){
-	  	       alert("fail")
-	  	} 
-	});
+	//radom number »ý¼º  lat,lon
   return {lat:window.lat, lng:window.lng};
 };
 var map;

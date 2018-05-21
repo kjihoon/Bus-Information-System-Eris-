@@ -34,29 +34,32 @@
 
   <!-- Navigation-->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav" >
-    <a class="navbar-brand" href="main.do"><strong>Bus Information System</strong></a>
+    <a class="navbar-brand" href="main.do?service=0"><strong>SBIS  [Seoul Bus Information System]</strong></a>
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
    
-         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
+   		 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
+          <a class="nav-link" href="main.do?service=0">
+            <i class="fa fa-fw fa-table"></i>
+            <span class="nav-link-text"><strong>전체 차량 조회</strong><br>(ALL Buses)</span>
+          </a>
+        </li>  
+   
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
           <a class="nav-link" href="main.do">
             <i class="fa fa-fw fa-table"></i>
-            <span class="nav-link-text">All Driver Env.</span>
+            <span class="nav-link-text"><strong>운행 차량 조회</strong><br>(Buses in Driving)</span>
           </a>
-        </li>
-        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-          <a class="nav-link" href="eachbus.do">
-            <i class="fa fa-fw fa-dashboard"></i>
-            <span class="nav-link-text">Realtime Infomation</span>
-          </a>
-        </li>    
+        </li>  
+ 		 <!-- After click specified bus(in driving) info, -->
+       <c:if  test="${allbusInfo !=null}" >  
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
           <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
             <i class="fa fa-fw fa-wrench"></i>
-            <span class="nav-link-text">Bus Infomation</span>
+            <span class="nav-link-text"><strong>차량 세부 제어</strong><br>(Bus Detail Controller)</span>
           </a>
           <ul class="sidenav-second-level collapse" id="collapseComponents">
             <li>
@@ -66,7 +69,42 @@
               <a href="cards.do">Other</a>
             </li>
           </ul>
+        </li>           
+       </c:if>
+ 		
+ 		
+ 		
+       
+       <!-- After click specified bus(in driving) info, -->
+       <c:if  test="${busInfo !=null}" >
+		 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+          <a class="nav-link" href="eachbus.do">
+            <i class="fa fa-fw fa-dashboard"></i>
+            <span class="nav-link-text"><strong>${busInfo.NUM }차량 현황</strong><br>(Realtime Infomation)</span>
+          </a>
+        </li>    
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
+          <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
+            <i class="fa fa-fw fa-wrench"></i>
+            <span class="nav-link-text"><strong>${busInfo.NUM } 차량 세부 제어</strong><br>(Bus Detail Controller)</span>
+          </a>
+          <ul class="sidenav-second-level collapse" id="collapseComponents">
+            <li>
+              <a href="navbar.do">Frame</a>
+            </li>
+            <li>
+              <a href="cards.do">Other</a>
+            </li>
+          </ul>
+        </li>           
+       </c:if>
+       <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
+          <a class="nav-link" href="main.do">
+            <i class="fa fa-fw fa-table"></i>
+            <span class="nav-link-text"><strong>기사님 정보</strong><br>(ALL Driver Information)</span>
+          </a>
         </li>
+             
       </ul>
       <ul class="navbar-nav sidenav-toggler">
         <li class="nav-item">
@@ -149,9 +187,13 @@
           </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
-            <i class="fa fa-fw fa-sign-out"></i>Logout</a>
+          <a class="nav-link" data-toggle="modal" data-target="#exampleModal2">
+            <i class="fa fa-fw fa-sign-out"></i>신규 등록</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
+            <i class="fa fa-fw fa-sign-out"></i>로그 아웃</a>
+        </li>        
       </ul>
     </div>
   </nav>
@@ -166,12 +208,7 @@
      		<jsp:include page="${center }.jsp"></jsp:include> 
      	</c:otherwise>
      </c:choose>
-     
-     	
-     	   	
-     	
-     	
-     </div>
+     	</div>
      </div>
     <footer class="sticky-footer">
       <div class="container">
@@ -190,24 +227,70 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+            <h5 class="modal-title" id="exampleModalLabel">로그아웃</h5>
             <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">占�</span>
+              <span aria-hidden="true">닫기</span>
             </button>
           </div>
-          <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+          <div class="modal-body">로그아웃 버튼을 클릭하면 정상적으로 로그아웃이됩니다.</div>
           <div class="modal-footer">
-            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-            <a class="btn btn-primary" href="logout.do" >Logout</a>
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+            <a class="btn btn-primary" href="logout.do" >로그아웃</a>
           </div>
         </div>
       </div>
     </div>
     
-   
-  </div>
-</body>
+    
+     <!-- Register Modal-->
+    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel2">등록</h5>
+            
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">닫기</span>
+            </button>
+            
+          </div>
+          <div class="modal-body">등록을 원하는 타입을 선택해주세요.</div>
+          
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-dismiss="modal" id="registerbus">버스</button>
+  			<button class="btn btn-secondary" type="button" data-dismiss="modal" id="registerdriver">기사</button>
+          </div>
+          
+        </div>
+      </div>
+    </div>
 
+</body>
+<script>
+$(document).ready(function(){
+	var a = "check"+"${result}"; //register check
+	if (a !="check"){
+		alert("${result }")
+	}
+	var dt = new Date();
+	var month = dt.getMonth()+1;
+	var day = dt.getDate();
+	var year = dt.getFullYear();
+	var hour = dt.getHours();
+    var min = dt.getMinutes();
+    var present ="업데이트 시간:  "+year+"년 "+month+"월 "+day+"일  "+hour+":"+min;
+    $('div[name=updatetime]').html(present)
+})
+
+$('#registerbus').click(function(){
+	window.location.href="registerbus.do";
+})
+$('#registerdriver').click(function(){
+	window.location.href="registerdriver.do";
+})
+
+</script>
 
  <!-- Bootstrap core JavaScript-->
     <script src="../adminBoot/admin_vendor/jquery/jquery.min.js"></script>

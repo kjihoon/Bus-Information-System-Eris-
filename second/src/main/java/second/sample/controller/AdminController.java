@@ -36,28 +36,28 @@ public class AdminController {
 	@Autowired
 	private BusService busService;
 	
+	
+	//after login.., directly view
 	@RequestMapping("admin/allbus.do")
 	public String allbus(CommandMap cmd,Model model) throws Exception {
-		
-		List<Map<String, Object>> map =busService.selectBusList(cmd.getMap());
-		model.addAttribute("allbus",map);
+		List<Map<String, Object>> allbus =busService.selectBusList(cmd.getMap());
+		model.addAttribute("allbus",allbus);
 		return "admin/main";
 	}
+	//after login.. click main view
 	@RequestMapping("admin/main.do")
 	public String adminmain(Model model,HttpSession session,CommandMap cmd) throws Exception {
-		String out ="admin/login";
-		if (session.getAttribute("adminInfo")!=null) {
-			model.addAttribute("center","testtable");
-			List<Map<String, Object>> allbus =busService.selectBusList(cmd.getMap());
-			model.addAttribute("allbus",allbus);			
-			out ="admin/main";
-		}
-		return out;
+			
+		session.removeAttribute("busInfo");
+		List<Map<String, Object>> allbus =busService.selectBusList(cmd.getMap());
+		model.addAttribute("allbus",allbus);			
+
+		return "admin/main";
 	}
 	
 
 	
-	//real time location
+	//real-time location
 	@RequestMapping("admin/location.do")
 	@ResponseBody
 	public String location(@RequestParam("busidx") String busidx) throws Exception {
@@ -77,41 +77,61 @@ public class AdminController {
 		JSONObject location = new JSONObject();
 		CommandMap cmd = new CommandMap();
 		cmd.put("busidx", busidx);
-		Map map = busService.selectBusOne(cmd.getMap());
-				
-		
+		Map map = busService.selectBusOne(cmd.getMap());		
 		location.put("lat", map.get("LAT"));
 		location.put("lng", map.get("LON"));
-		
 		System.out.println(location.toJSONString());
+		//location 보내야함		
+		
+		return jo.toJSONString();
+	}
+	//real-time humid & temperature
+	@RequestMapping("admin/temperature.do")
+	@ResponseBody
+	public String realtime(@RequestParam("busidx") String busidx) throws Exception {
+		
+		//radom test
+		JSONObject jo = new JSONObject();
+		List<Integer> list = new ArrayList<>();
+		for (int i =0;i<13;i++) {
+			list.add((int) (Math.random()*30)+1 );
+		}
+		jo.put("list", list);
+		System.out.println(jo.toJSONString());
+		
+		//actual value
+		JSONObject tempjo = new JSONObject();
+		CommandMap cmd = new CommandMap();
+		cmd.put("busidx", busidx);
+		Map map = busService.selectBusOne(cmd.getMap());
+		//tempjo.put("temp", value)
 		
 		
 		return jo.toJSONString();
 	}
 	
-
+	//move each bus information
 	@RequestMapping("admin/dash.do")
 	public String admindash(Model model,@RequestParam("busidx") String busidx,HttpSession session) throws Exception {
-		if (session.getAttribute("adminInfo")!=null) {
-			model.addAttribute("center","testdash");
-			session.setAttribute("busidx", busidx);
 			
-			CommandMap check = new CommandMap();
-			check.put("busidx", busidx);
-			Map map = busService.selectBusOne(check.getMap());
-			
-			
-			
-			model.addAttribute("busInfo",map);
-			
-		}
+		model.addAttribute("center","testdash");			
+		session.setAttribute("busidx", busidx);		
+		CommandMap check = new CommandMap();		
+		check.put("busidx", busidx);			
+		Map map = busService.selectBusOne(check.getMap());
+		session.setAttribute("busInfo",map);	
 		return "admin/main";
 	}
+	
+	//just login
 	@RequestMapping("admin/login.do")
-	public String adminlogin(HttpSession session,Model model) {
+	public String adminlogin(HttpSession session,Model model) throws Exception {
 		Map adminInfo = (Map) session.getAttribute("adminInfo");
 		String out = "admin/login";
 		if (adminInfo!=null) {
+			CommandMap cmd = new CommandMap();
+			List<Map<String, Object>> allbus =busService.selectBusList(cmd.getMap());
+			model.addAttribute("allbus",allbus);
 			out = "admin/main";
 		}
 		return out;
@@ -121,70 +141,33 @@ public class AdminController {
 		session.invalidate();
 		return "admin/login";
 	}
-	
 	@RequestMapping(value="admin/loginimp.do", method=RequestMethod.POST)
 	public String adminloginimp(Model model,HttpSession session,CommandMap cmd) throws Exception {
 		Map<String,Object> map = new HashMap<String,Object>();
 		map= adminService.selectAdminOne(cmd.getMap());
-		String result="login"; 
+		String result="admin/login"; 
 		if (map==null) {
-			map = new HashMap<String,Object>();
-			map.put("result", "fail");
-			model.addAttribute("result","Invalid ID or PWD, Please rewrite form");
+			model.addAttribute("result","관리자의 ID 또는 PWD가 잘못되었습니다.");
+			log.debug("==="+cmd.get("id")+"login fail===");
 		}else {
-			map.put("result", "success");
+			log.debug("==="+cmd.get("id")+"login Success===");
 			session.setAttribute("adminInfo", map);
+			System.out.println(cmd.getMap());
 			List<Map<String, Object>> allbus =busService.selectBusList(cmd.getMap());
 			model.addAttribute("allbus",allbus);			
-			result = "main";
+			result = "admin/main";
 		}		
-		return "admin/"+result;
+		return result;
 	}
-	
-
-	
-	
 	
 	//Each bus msg
 	@RequestMapping("admin/eachbus.do")
 	public String data(Model model) {
-/*		List<Map> list = new ArrayList<>();
-		
-		
-		Map<String,String> map = new HashMap<>();
-		map.put("name", "jihoon");
-		map.put("message", "12");
-		map.put("time", "11:24 AM");
-		list.add(map);
-		list.add(map);
-		list.add(map);
-		list.add(map);
-		list.add(map);	
-		model.addAttribute("list",list);
-		model.addAttribute("msgsize", list.size());// new masseage size로 변경
-		System.out.println(list.toString());*/
-		
-		
-		
+
 		model.addAttribute("center","testdash");
 		return "admin/main";
 	}
 	
-	
-	
-	
-	//실시간 버스 온 습도 보내기 ajax
-	@RequestMapping("admin/temperature.do")
-	@ResponseBody
-	public String realtime() {
-		JSONObject jo = new JSONObject();
-		List<Integer> list = new ArrayList<>();
-		for (int i =0;i<13;i++) {
-			list.add((int) (Math.random()*30)+1 );
-		}
-		jo.put("list", list);		
-		return jo.toJSONString();
-	}
 	
 	
 	

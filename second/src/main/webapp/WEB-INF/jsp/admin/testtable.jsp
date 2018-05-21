@@ -6,53 +6,57 @@
       <!-- Example DataTables Card-->
       <div class="card mb-3">
         <div class="card-header">
-          <i class="fa fa-table"></i>Current Buses in service.</div>
+          <i class="fa fa-table"></i>차량 현황</div>
         <div class="card-body">
           <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
-                  <th>BUS FLATENUM<th>
-                  <th>Driver Name</th>
-                  <th>Bus Number</th>
-                  <th>Location(lat)</th>
-				  <th>Location(lon)</th>
-                  <th>Total Service Time</th>                 
+                  <th>차량 고유번호(IDX)</th>
+                  <th>버스 번호</th>
+                  <th>차량 번호</th>
+                  <th>운전자 명</th>                  
+                  <th>현 위치(lat)</th>
+				  <th>현 위치(lon)</th>
+                  <th>운행 여부</th>             
                 </tr>
               </thead>
               <tfoot>
                 <tr>
-                 <th>BUS FLATENUM<th>
-                 <th>Driver Name</th>
-                  <th>Bus Number</th>
-                  <th>Location(lat)</th>
-				  <th>Location(lon)</th>
-                  <th>Bus Type</th>                 
+                 <th>차량 고유번호(IDX)</th>
+                 <th>버스 번호</th>
+                 <th>차량 번호</th>
+                 <th>운전자 명</th>                  
+                  <th>현 위치(lat)</th>
+				  <th>현 위치(lon)</th>
+                  <th>운행 여부</th>   
                 </tr>
               </tfoot>
               <tbody>
                <c:forEach items="${allbus }" var="bus">
                <tr>
-              	 <td><span class="dirveridx" id="bidx${bus.BUSIDX }">${bus.PLATENUM }</span><td>
-                  	<td>${bus.DRIVERIDX }</td>
-                 	<td>${bus.NUM }</td>
-                 	<td>${bus.LAT}</td>
-                  	<td>${bus.LON}</td>
-                  <td>${bus.BUSTYPE }</td>
+               		<td class="dirveridx" name="bidx${bus.BUSIDX }">${bus.BUSIDX }</td>
+              	    <td class="dirveridx" name="bidx${bus.BUSIDX }">${bus.NUM }</td>
+                 	<td class="dirveridx" name="bidx${bus.BUSIDX }">${bus.PLATENUM }</td>
+                 	<td class="dirveridx" name="bidx${bus.BUSIDX }">${bus.DRIVERIDX }</td>
+                 	<td class="dirveridx" name="bidx${bus.BUSIDX }">${bus.LAT}</td>
+                  	<td class="dirveridx" name="bidx${bus.BUSIDX }">${bus.LON}</td>
+                  <td class="dirveridx" name="bidx${bus.BUSIDX }">${bus.SERVICE }</td>
                </tr>
                </c:forEach>              
               </tbody>
             </table>
           </div>
         </div>
-        <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+        <div class="card-footer small text-muted" name="updatetime"></div>
       </div>
      <script>
       $('.dirveridx').click(function(){
-    	  var id = $(this).attr('id')
+    	  var id = $(this).attr('name')
     	  id = id.slice(4)    	  
     	  window.location.href="dash.do?busidx="+id
     	  
       })   
-      
+	
+    
      </script>
