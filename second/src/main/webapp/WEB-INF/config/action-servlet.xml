@@ -44,11 +44,17 @@
 				class="second.common.logger.LoggerInterceptor"></beans:bean>
 		</interceptor>
 		
-		<interceptor>
-			<mapping path="/**" />
-			<beans:bean id="loginInterceptor"
-				class="second.common.logger.LoginInterceptor"></beans:bean>
+ 		<interceptor>
+			<mapping path="/admin/**" />
+			<beans:bean id="loginInterceptor_admin"
+				class="second.common.logger.LoginInterceptor_admin"></beans:bean>
 		</interceptor>
+		<interceptor>
+			<mapping path="/driver/**" />
+			<beans:bean id="loginInterceptor_driver"
+				class="second.common.logger.LoginInterceptor_driver"></beans:bean>
+		</interceptor>
+		
 	</interceptors>
 	<context:component-scan base-package="second" />
 

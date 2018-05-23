@@ -9,24 +9,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-public class LoginInterceptor extends HandlerInterceptorAdapter{
+public class LoginInterceptor_driver extends HandlerInterceptorAdapter{
 	protected Log log = LogFactory.getLog(LoggerInterceptor.class); 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception { 
 		String path = request.getServletPath();
-		if(path.equals("/admin/login.do")) {  
-			return true;
-		}else if(path.equals("/admin/loginimp.do")) {
-			return true;
-		}else if(path.equals("/admin/buson.do")) {
-			return true;
-		}else if(path.equals("/admin/busoff.do")) {
-			return true;
-		}else if(path.equals("/admin/busrealtime.do")) {
+		if(path.equals("/driver/login.do") || path.equals("/driver/loginimp.do")) {
 			return true;
 		}else {  
 			@SuppressWarnings("unchecked") 
-			Map<String, Object> userMap = (Map<String, Object>) request.getSession().getAttribute("adminInfo");	 	 
+			Map<String, Object> userMap = (Map<String, Object>) request.getSession().getAttribute("driverInfo");	 	 
 			if(userMap == null) {
 				log.debug("==========Detect Abnormal Approach==============");
 				response.sendRedirect("login.do");  

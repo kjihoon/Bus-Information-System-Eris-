@@ -25,4 +25,6 @@ public class BusController {
 		List<Map<String, Object>> map =busService.selectBusList(cmd.getMap());
 		return map.toString();
 	}
+	
+	
 }

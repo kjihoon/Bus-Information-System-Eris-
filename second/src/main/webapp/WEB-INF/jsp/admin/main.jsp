@@ -4,13 +4,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
+
   <title>Eris BIS</title>
   
   
@@ -24,8 +24,50 @@
   <!-- Custom styles for this template-->
   <link href="../adminBoot/admin_css/sb-admin.css" rel="stylesheet">
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-  
+<style>
 
+/*nav col  */
+ .navbar-custom {
+    background-color:   #41848F   ;
+}
+/* text col in nav */
+/* change the brand and text color */
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-text {
+    color: #fff;
+}
+/* change the link color */
+.navbar-custom .navbar-nav .nav-link {
+    color: #fff;
+}
+
+/* hoover col  */
+/* change the color of active or hovered links */
+.navbar-custom .nav-item.active .nav-link,
+.navbar-custom .nav-item:hover .nav-link {
+    color:    #0A555C;
+} 
+
+.navbar-sidenav{
+ background-color:   #41848F   ;
+}
+.navbar-toggler{
+	background-color:	 #72A7A3;
+}
+.navbar-toggler-icon{
+background-color:	 #EBE2B3;
+}
+.nav-item{
+background-color:	 #41848F;
+border-color: coral;
+}
+div .card-header{
+ background-color:     #EBE2B3     ;
+}
+.breadcrumb{
+background-color: #97C0B7;
+}
+</style>
 </head>
 
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
@@ -33,7 +75,8 @@
 	
 
   <!-- Navigation-->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav" >
+  <!-- "navbar navbar-expand-lg navbar-custom" -->
+  <nav class="navbar navbar-expand-lg navbar-custom fixed-top" id="mainNav">
     <a class="navbar-brand" href="main.do?service=0"><strong>SBIS  [Seoul Bus Information System]</strong></a>
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>

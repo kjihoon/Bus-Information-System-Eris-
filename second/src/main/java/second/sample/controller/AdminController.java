@@ -38,14 +38,14 @@ public class AdminController {
 	
 	
 	//after login.., directly view
-	@RequestMapping("admin/allbus.do")
+	@RequestMapping("/admin/allbus.do")
 	public String allbus(CommandMap cmd,Model model) throws Exception {
 		List<Map<String, Object>> allbus =busService.selectBusList(cmd.getMap());
 		model.addAttribute("allbus",allbus);
 		return "admin/main";
 	}
 	//after login.. click main view
-	@RequestMapping("admin/main.do")
+	@RequestMapping("/admin/main.do")
 	public String adminmain(Model model,HttpSession session,CommandMap cmd) throws Exception {
 			
 		session.removeAttribute("busInfo");
@@ -58,7 +58,7 @@ public class AdminController {
 
 	
 	//real-time location
-	@RequestMapping("admin/location.do")
+	@RequestMapping("/admin/location.do")
 	@ResponseBody
 	public String location(@RequestParam("busidx") String busidx) throws Exception {
 		
@@ -86,7 +86,7 @@ public class AdminController {
 		return jo.toJSONString();
 	}
 	//real-time humid & temperature
-	@RequestMapping("admin/temperature.do")
+	@RequestMapping("/admin/temperature.do")
 	@ResponseBody
 	public String realtime(@RequestParam("busidx") String busidx) throws Exception {
 		
@@ -111,7 +111,7 @@ public class AdminController {
 	}
 	
 	//move each bus information
-	@RequestMapping("admin/dash.do")
+	@RequestMapping("/admin/dash.do")
 	public String admindash(Model model,@RequestParam("busidx") String busidx,HttpSession session) throws Exception {
 			
 		model.addAttribute("center","testdash");			
@@ -124,7 +124,7 @@ public class AdminController {
 	}
 	
 	//just login
-	@RequestMapping("admin/login.do")
+	@RequestMapping("/admin/login.do")
 	public String adminlogin(HttpSession session,Model model) throws Exception {
 		Map adminInfo = (Map) session.getAttribute("adminInfo");
 		String out = "admin/login";
@@ -136,12 +136,12 @@ public class AdminController {
 		}
 		return out;
 	}
-	@RequestMapping("admin/logout.do")
+	@RequestMapping("/admin/logout.do")
 	public String adminlogout(HttpSession session) {
 		session.invalidate();
 		return "admin/login";
 	}
-	@RequestMapping(value="admin/loginimp.do", method=RequestMethod.POST)
+	@RequestMapping(value="/admin/loginimp.do", method=RequestMethod.POST)
 	public String adminloginimp(Model model,HttpSession session,CommandMap cmd) throws Exception {
 		Map<String,Object> map = new HashMap<String,Object>();
 		map= adminService.selectAdminOne(cmd.getMap());
@@ -161,7 +161,7 @@ public class AdminController {
 	}
 	
 	//Each bus msg
-	@RequestMapping("admin/eachbus.do")
+	@RequestMapping("/admin/eachbus.do")
 	public String data(Model model) {
 
 		model.addAttribute("center","testdash");
