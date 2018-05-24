@@ -1,6 +1,7 @@
 package second.sample.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -29,13 +30,95 @@ import second.common.common.CommandMap;
 public class AdminController {
 
 	Logger log = Logger.getLogger(this.getClass());
-
+	
+	
+	
 	@Autowired
 	private AdminService adminService;
 	
 	@Autowired
 	private BusService busService;
 	
+	// list 0 - lat
+	// list 1 - lon
+	// list 2~ 14 - temp
+	// list 15~27 - humid 
+	private static Map <String,List<String>> map = new HashMap<>();
+	
+	
+	//최초 요청시 초기화
+	private void initData(String busidx) {
+		List<String> list = new ArrayList<>();
+		list.add("37");list.add("127");
+		for (int i =2;i<=27;i++) {
+			if (i<=14) {
+				list.add("20");
+			}else {
+				list.add("30");
+			}
+		}
+		map.put(busidx, list);
+	}
+	
+	@RequestMapping("/admin/relocation.do")
+	public void relocation(@RequestParam("busidx")String busidx,@RequestParam("lat")String lat,@RequestParam("lon")String lon) {
+		map.get(busidx).set(0,lat);
+		map.get(busidx).set(1,lon);
+	}
+	
+	//real-time location
+		@RequestMapping("/admin/location.do")
+		@ResponseBody
+		public String location(@RequestParam("busidx") String busidx) throws Exception {
+			
+			
+			
+			//random data for test
+			JSONObject jo = new JSONObject();
+			double lat = 37.4999072;;
+			double lng = 127.0373932;
+			double rand = Math.random()*0.01;
+			lat = lat-rand;
+			lng = lng-rand;
+			
+			jo.put("lat", lat);
+			jo.put("lng", lng);
+			System.out.println(jo.toJSONString());
+			
+			//actual data
+			JSONObject location = new JSONObject();
+			
+			location.put("lat",map.get(busidx).get(0));
+			location.put("lng", map.get(busidx).get(1));
+			System.out.println(location.toJSONString());
+			//location 보내야함		
+			
+			return location.toJSONString();
+		}
+		//real-time humid & temperature
+		@RequestMapping("/admin/temperature.do")
+		@ResponseBody
+		public String realtime(@RequestParam("busidx") String busidx) throws Exception {
+			
+			//radom test
+			JSONObject jo = new JSONObject();
+			List<Integer> list = new ArrayList<>();
+			for (int i =0;i<13;i++) {
+				list.add((int) (Math.random()*30)+1 );
+			}
+			jo.put("list", list);
+			System.out.println(jo.toJSONString());
+			
+			//actual value
+			JSONObject tempjo = new JSONObject();
+			CommandMap cmd = new CommandMap();
+			cmd.put("BUSIDX", busidx);
+			Map map = busService.selectBusOne(cmd.getMap());
+			//tempjo.put("temp", value)
+			
+			
+			return jo.toJSONString();
+		}
 	
 	//after login.., directly view
 	@RequestMapping("/admin/allbus.do")
@@ -57,63 +140,12 @@ public class AdminController {
 	
 
 	
-	//real-time location
-	@RequestMapping("/admin/location.do")
-	@ResponseBody
-	public String location(@RequestParam("busidx") String busidx) throws Exception {
-		
-		//random data for test
-		JSONObject jo = new JSONObject();
-		double lat = 37.4999072;
-		double lng = 127.0373932;
-		double rand = Math.random()*0.01;
-		lat = lat-rand;
-		lng = lng-rand;
-		jo.put("lat", lat);
-		jo.put("lng", lng);
-		System.out.println(jo.toJSONString());
-		
-		//actual data
-		JSONObject location = new JSONObject();
-		CommandMap cmd = new CommandMap();
-		cmd.put("BUSIDX", busidx);
-		Map map = busService.selectBusOne(cmd.getMap());		
-		location.put("lat", map.get("LAT"));
-		location.put("lng", map.get("LON"));
-		System.out.println(location.toJSONString());
-		//location 보내야함		
-		
-		return jo.toJSONString();
-	}
-	//real-time humid & temperature
-	@RequestMapping("/admin/temperature.do")
-	@ResponseBody
-	public String realtime(@RequestParam("busidx") String busidx) throws Exception {
-		
-		//radom test
-		JSONObject jo = new JSONObject();
-		List<Integer> list = new ArrayList<>();
-		for (int i =0;i<13;i++) {
-			list.add((int) (Math.random()*30)+1 );
-		}
-		jo.put("list", list);
-		System.out.println(jo.toJSONString());
-		
-		//actual value
-		JSONObject tempjo = new JSONObject();
-		CommandMap cmd = new CommandMap();
-		cmd.put("BUSIDX", busidx);
-		Map map = busService.selectBusOne(cmd.getMap());
-		//tempjo.put("temp", value)
-		
-		
-		return jo.toJSONString();
-	}
+	
 	
 	//move each bus information
 	@RequestMapping("/admin/dash.do")
 	public String admindash(Model model,@RequestParam("busidx") String busidx,HttpSession session) throws Exception {
-			
+		initData(busidx);
 		model.addAttribute("center","testdash");			
 		session.setAttribute("busidx", busidx);		
 		CommandMap check = new CommandMap();		
@@ -125,7 +157,8 @@ public class AdminController {
 	
 	//just login
 	@RequestMapping("/admin/login.do")
-	public String adminlogin(HttpSession session,Model model) throws Exception {
+	public String adminlogin(HttpSession session,Model model,CommandMap cmd2) throws Exception {
+		System.out.println(cmd2.toString());
 		Map adminInfo = (Map) session.getAttribute("adminInfo");
 		String out = "admin/login";
 		if (adminInfo!=null) {
@@ -170,7 +203,6 @@ public class AdminController {
 	
 	
 	
-	////////////////////////////////////////////////외부접속//////////////////////////////////////////////////////
 	//Driver 운행 시작
 	@RequestMapping("admin/buson.do")
 	@ResponseBody

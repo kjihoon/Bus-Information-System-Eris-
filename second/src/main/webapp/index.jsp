@@ -3,5 +3,5 @@
 
 <script>
 
-	window.location.href="driver/main.do"
+	window.location.href="admin/main.do"
 </script>

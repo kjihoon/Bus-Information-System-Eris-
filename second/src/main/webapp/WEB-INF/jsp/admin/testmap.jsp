@@ -53,6 +53,5 @@ setInterval(function() {
   pubnub.publish({channel:pnChannel, message:circlePoint(new Date().getTime()/1000)});
 }, 2000);
 </script>
-
-  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyB5ipWIhIaIqQkGI69cV3QZE2WvLjqzTkk
-  &callback=initialize"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWeKRv1aUXjjhW8FelJWw4FLH6rIzU5eA
+  &callback=initMap"  type="text/javascript"></script>

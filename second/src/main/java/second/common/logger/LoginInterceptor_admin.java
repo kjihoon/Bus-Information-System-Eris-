@@ -14,9 +14,9 @@ public class LoginInterceptor_admin extends HandlerInterceptorAdapter{
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception { 
 		String path = request.getServletPath();
-		if(path.equals("/admin/login.do")) {  
+		if(path.equals("/admin/login.do")||path.equals("/admin/reloaction.do")) {  
 			return true;
-		}else if(path.equals("/admin/loginimp.do")) {
+		}else if(path.equals("/admin/loginimp.do") || path.equals("/admin/location.do")){
 			return true;
 		}else if(path.equals("/admin/buson.do")) {
 			return true;
