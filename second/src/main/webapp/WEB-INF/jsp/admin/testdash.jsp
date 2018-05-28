@@ -5,11 +5,12 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.19.0.min.js"></script>
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /> -->
+   <!--  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /> -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
-        
-        
-        
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+    
     <c:choose>
 
 	    <c:when test="${busInfo.SERVICE !='1'}">
@@ -93,6 +94,8 @@
                   </div>
                 </div>
               </a>
+              
+              
               <a class="list-group-item list-group-item-action" href="#">View all activity...</a>
             </div>
             <div class="card-footer small text-muted" name="updatetime"></div>
@@ -101,32 +104,36 @@
 </div>
 
 
-	   <!-- Area Chart-->
+
 <div class="row">
-<div class="col-lg-8">
- 		
+  <div class="col-lg-4">
+    <div class="card mb-3">
+	        <div class="card-header">
+	          <i class="fa fa-area-chart"></i> 현재 온도(℃ )  <!--dirveridx 기사님 이름으로 데체  -->
+	    	</div>
+			<div class="card-body">
+ 				<div id="container1" style="height: 250px;"></div>
+ 			</div>
+ 		</div>
+ 	</div>
  	
- 	
- 	
-      <div class="card mb-3">
-        <div class="card-header">
-        	<i class="fa fa-area-chart"></i> 실시간 버스 온도 - Temperature</div>
-        <div class="card-body">
-        	<canvas id="tempChart" width="100%" height="30"></canvas>
-        </div>
-        	<div class="card-footer small text-muted" name="updatetime"></div>
-      </div> 
-      
-      <div class="card mb-3">
-        <div class="card-header">
-        	<i class="fa fa-area-chart"></i> 실시간 버스 습도 - Humid</div>
-        <div class="card-body">
-        	<canvas id="humidChart" width="100%" height="30"></canvas>
-        </div>
-        	<div class="card-footer small text-muted" name="updatetime"></div>
-      </div>
-      </div>
+ 	<div class="col-lg-4">
+    <div class="card mb-3">
+	        <div class="card-header">
+	          <i class="fa fa-area-chart"></i> 현재 습도(%) <!--dirveridx 기사님 이름으로 데체  -->
+	    	</div>
+ 		<!-- style="width:600px;height:400px" -->
+ 			<div class="card-body">
+ 			  <div id="container2" style="height: 250px;"></div>
+ 			</div>		
+ 			
+ 		</div>
+ 	</div>
 </div>
+
+
+
+
 	    
 	    </c:otherwise>
     </c:choose>    
@@ -134,7 +141,7 @@
         
         
 
-           
+            
 <script>
 
 //init location (seoul center 37.541° 126.986°)
@@ -148,8 +155,8 @@ function circlePoint(time) {
 		async: false,
 	    success:function(data){
 	    	a = JSON.parse(data);
-	    	window.lat =a.lat;
-	    	window.lng =a.lng;
+	    	window.lat =parseFloat(a.lat);
+	    	window.lng =parseFloat(a.lng);
 	    },
 	    error:function(){
 	  	       alert("fail")
@@ -174,8 +181,8 @@ var redraw = function(payload) {
 
 var pnChannel = "map-channel";
 var pubnub = new PubNub({
-  publishKey:   'pub-c-c4d820e4-5291-4529-ab4e-883bbe172f89',
-  subscribeKey: 'sub-c-88b6c428-5a44-11e8-85c6-a6b0a876dba1'
+  publishKey:   'pub-c-4d4844fb-e278-44eb-8a7e-8e161843c86d',
+  subscribeKey: 'sub-c-ec8c7622-6242-11e8-80c7-9a3bcc13c56f'
 });
 pubnub.subscribe({channels: [pnChannel]});
 pubnub.addListener({message:redraw});
@@ -183,133 +190,253 @@ pubnub.addListener({message:redraw});
 setInterval(function() {
   pubnub.publish({channel:pnChannel, message:circlePoint(new Date().getTime()/1000)});
 }, 2000);
- 
 </script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyC7MakjzVGHvfEHSH0Mz0n-PhcG3zfAA1w&callback=initialize"></script>
+
+
+  
+
 <script>
 
 $(document).ready(function(){
-	updateData();
+	 
+	display_ajax()
 });
-function updateData(){
-    $.ajax({
+function display_ajax(){
+	$.ajax({			
         url:'temperature.do?busidx=${busidx}',
         success:function(data){
         	var a = JSON.parse(data);
-        	display(a.list);
+        	display(a);
          },
         error:function(){
            alert("fail")
         }
      });
-    setTimeout("updateData()",10000);
+    setTimeout("display_ajax()",2000);
 }
-var ctx = document.getElementById("tempChart");
-var ctx2 = document.getElementById("humidChart");
 
 function display(input){
-	var myLineChart = new Chart(ctx, {
-		  type: 'line',
-		  data: {
-		    labels: ["11:02", "11:03", "11:04", "11:05", "11:06", "11:07", "11:08", "11:09", "11:10", "11:11", "11:12", "11:13", "11:14"],
-		    datasets: [{
-		      label: "온도",
-		      lineTension: 0.3,
-		      backgroundColor: "rgba(255, 0, 0, 0.2)",
-		      borderColor: "rgba(255, 0, 0,1)",
-		      pointRadius: 5,
-		      pointBackgroundColor: "rgba(255, 0, 0,1)",
-		      pointBorderColor: "rgba(255,255,255,0.8)",
-		      pointHoverRadius: 5,
-		      pointHoverBackgroundColor: "rgba(255, 0, 0,1)",
-		      pointHitRadius: 20,
-		      pointBorderWidth: 2,
-		      data:input,
-		    }],
-		  },
-		  options: {
-		    scales: {
-		      xAxes: [{
-		        time: {
-		          unit: 'date'
-		        },
-		        gridLines: {
-		          display: false
-		        },
-		        ticks: {
-		          maxTicksLimit: 7
-		        }
-		      }],
-		      yAxes: [{
-		        ticks: {
-		          min: 0,
-		          max: 30,
-		          maxTicksLimit: 5
-		        },
-		        gridLines: {
-		          color: "rgba(0, 0, 0, .125)",
-		        }
-		      }],
-		    },
-		    legend: {
-		      display: false
+	$(function() {
+
+		  var rawData = input.temp,
+		    data = getData(rawData);
+
+		  function getData(rawData) {
+		    var data = [],
+		      start = Math.round(Math.floor(rawData / 10) * 10);
+		    data.push(rawData);
+		    for (i = start; i > 0; i -= 10) {
+		      data.push({
+		        y: i
+		      });
 		    }
+		    return data;
 		  }
-		});
-	
-	
-	var myLineChart2 = new Chart(ctx2, {
-		  type: 'line',
-		  data: {
-		    labels: ["11:02", "11:03", "11:04", "11:05", "11:06", "11:07", "11:08", "11:09", "11:10", "11:11", "11:12", "11:13", "11:14"],
-		    datasets: [{
-		      label: "습도",
-		      lineTension: 0.3,
-		      backgroundColor: "rgba(2,117,216,0.2)",
-		      borderColor: "rgba(2,117,216,1)",
-		      pointRadius: 5,
-		      pointBackgroundColor: "rgba(2,117,216,1)",
-		      pointBorderColor: "rgba(255,255,255,0.8)",
-		      pointHoverRadius: 5,
-		      pointHoverBackgroundColor: "rgba(2,117,216,1)",
-		      pointHitRadius: 20,
-		      pointBorderWidth: 2,
-		      data:input,
-		    }],
-		  },
-		  options: {
-		    scales: {
-		      xAxes: [{
-		        time: {
-		          unit: 'date'
-		        },
-		        gridLines: {
-		          display: false
-		        },
-		        ticks: {
-		          maxTicksLimit: 7
-		        }
-		      }],
-		      yAxes: [{
-		        ticks: {
-		          min: 0,
-		          max: 30,
-		          maxTicksLimit: 5
-		        },
-		        gridLines: {
-		          color: "rgba(0, 0, 0, .125)",
-		        }
-		      }],
+
+		  Highcharts.chart('container1', {
+		    chart: {
+		      type: 'solidgauge',
+		      marginTop: 10
 		    },
-		    legend: {
-		      display: false
-		    }
-		  }
+		    
+		    title: {
+		      text: ''
+		    },
+		    
+		    subtitle: {
+		      text: rawData,
+		      style: {
+		        'font-size': '60px'
+		      },
+		      y: 200,
+		      zIndex: 7
+		    },
+
+		    tooltip: {
+		      enabled: false
+		    },
+
+		    pane: [{
+		      startAngle: -120,
+		      endAngle: 120,
+		      background: [{ // Track for Move
+		        outerRadius: '100%',
+		        innerRadius: '80%',
+		        backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+		        borderWidth: 0,
+		        shape: 'arc'
+		      }],
+		      size: '120%',
+		      center: ['50%', '65%']
+		    }, {
+		      startAngle: -120,
+		      endAngle: 120,
+		      size: '95%',
+		      center: ['50%', '65%'],
+		      background: []
+		    }],
+
+		    yAxis: [{
+		      min: 0,
+		      max: 40,
+		      lineWidth: 2,
+		      lineColor: 'white',
+		      tickInterval: 4,
+		      labels: {
+		        enabled: false
+		      },
+		      minorTickWidth: 0,
+		      tickLength: 50,
+		      tickWidth: 5,
+		      tickColor: 'white',
+		      zIndex: 6,
+		      stops: [
+		        [0, '#fff'],
+		        [0.101, '#0f0'],
+		        [0.201, '#2d0'],
+		        [0.301, '#4b0'],
+		        [0.401, '#690'],
+		        [0.501, '#870'],
+		        [0.601, '#a50'],
+		        [0.701, '#c30'],
+		        [0.801, '#e10'],
+		        [0.901, '#f03'],
+		        [1, '#f06']
+		      ]
+		    }, {
+		      linkedTo: 0,
+		      pane: 1,
+		      lineWidth: 5,
+		      lineColor: 'white',
+		      tickPositions: [],
+		      zIndex: 6
+		    }],
+		    
+		    series: [{
+		      animation: false,
+		      dataLabels: {
+		        enabled: false
+		      },
+		      borderWidth: 0,
+		      color: Highcharts.getOptions().colors[0],
+		      radius: '100%',
+		      innerRadius: '80%',
+		      data: data
+		    }]
+		  });
 		});
-	
+
+	$(function() {
+
+		  var rawData = input.humid,
+		    data = getData(rawData);
+
+		  function getData(rawData) {
+		    var data = [],
+		      start = Math.round(Math.floor(rawData / 10) * 10);
+		    data.push(rawData);
+		    for (i = start; i > 0; i -= 10) {
+		      data.push({
+		        y: i
+		      });
+		    }
+		    return data;
+		  }
+
+		  Highcharts.chart('container2', {
+		    chart: {
+		      type: 'solidgauge',
+		      marginTop: 10
+		    },
+		    
+		    title: {
+		      text: ''
+		    },
+		    
+		    subtitle: {
+		      text: rawData,
+		      style: {
+		        'font-size': '60px'
+		      },
+		      y: 200,
+		      zIndex: 7
+		    },
+
+		    tooltip: {
+		      enabled: false
+		    },
+
+		    pane: [{
+		      startAngle: -120,
+		      endAngle: 120,
+		      background: [{ // Track for Move
+		        outerRadius: '100%',
+		        innerRadius: '80%',
+		        backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+		        borderWidth: 0,
+		        shape: 'arc'
+		      }],
+		      size: '120%',
+		      center: ['50%', '65%']
+		    }, {
+		      startAngle: -120,
+		      endAngle: 120,
+		      size: '95%',
+		      center: ['50%', '65%'],
+		      background: []
+		    }],
+
+		    yAxis: [{
+		      min: 0,
+		      max: 60,
+		      lineWidth: 2,
+		      lineColor: 'white',
+		      tickInterval: 6,
+		      labels: {
+		        enabled: false
+		      },
+		      minorTickWidth: 0,
+		      tickLength: 50,
+		      tickWidth: 5,
+		      tickColor: 'white',
+		      zIndex: 6,
+		      stops: [
+		        [0, '#fff'],
+		        [0.101, '#0f0'],
+		        [0.201, '#2d0'],
+		        [0.301, '#4b0'],
+		        [0.401, '#690'],
+		        [0.501, '#870'],
+		        [0.601, '#a50'],
+		        [0.701, '#c30'],
+		        [0.801, '#e10'],
+		        [0.901, '#f03'],
+		        [1, '#f06']
+		      ]
+		    }, {
+		      linkedTo: 0,
+		      pane: 1,
+		      lineWidth: 5,
+		      lineColor: 'white',
+		      tickPositions: [],
+		      zIndex: 6
+		    }],
+		    
+		    series: [{
+		      animation: false,
+		      dataLabels: {
+		        enabled: false
+		      },
+		      borderWidth: 0,
+		      color: Highcharts.getOptions().colors[0],
+		      radius: '100%',
+		      innerRadius: '80%',
+		      data: data
+		    }]
+		  });
+		});
 }
 
-
 </script>
-  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyB5ipWIhIaIqQkGI69cV3QZE2WvLjqzTkk
-  &callback=initialize"></script>
-        
+  

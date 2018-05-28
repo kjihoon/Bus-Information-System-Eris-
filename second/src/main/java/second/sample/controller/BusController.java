@@ -21,7 +21,6 @@ public class BusController {
 	@RequestMapping("bustest.do")
 	@ResponseBody
 	public String bustest(CommandMap cmd) throws Exception {
-		
 		List<Map<String, Object>> map =busService.selectBusList(cmd.getMap());
 		return map.toString();
 	}
