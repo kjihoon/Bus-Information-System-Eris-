@@ -15,7 +15,7 @@
 	<select id="selectBusOne" parameterType="hashmap"
 		resultType="hashmap">        
             <![CDATA[
-            select * from bus where busidx =#{BUSIDX}
+            select * from bus where busidx =#{busidx}
             ]]>   
 	</select>
 	
@@ -25,18 +25,6 @@
 		]]>
 	</insert>
 	<update id="updateBus" parameterType="hashmap">
-		update bus set
-				LON = #{LON},
-				LAT = #{LAT},
-				TEMP = #{TEMP},
-				HUMID = #{HUMID},
-				<if test="realtime ==null">					
-					DRIVERIDX=#{DRIVERIDX},
-					SERVICE = #{SERVICE}
-				where BUSIDX=#{BUSIDX}
-				</if>
-				<if test="realtime !=null">
-				where BUSIDX=#{BUSIDX}
-				</if>
+		update bus set	DRIVERIDX=#{driveridx},SERVICE = #{service} where BUSIDX=#{busidx}			
 	</update>
 </mapper>

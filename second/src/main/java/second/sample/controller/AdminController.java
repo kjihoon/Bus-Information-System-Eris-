@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import second.admin.service.AdminService;
 import second.bus.service.BusService;
 import second.common.common.CommandMap;
+import second.driver.service.DriverService;
 
 @Controller
 public class AdminController {
@@ -36,10 +37,16 @@ public class AdminController {
 	@Autowired
 	private BusService busService;
 	
+	@Autowired
+	private DriverService driverService;
+	
 	// list 0 - lat
 	// list 1 - lon
 	// list 2 - temp
-	// list 3 - humid 
+	// list 3 - humid
+	// list 4 - distance
+	// list 5 - xx
+	// ...
 	private static Map <String,List<String>> map = new HashMap<>();
 	
 	
@@ -48,11 +55,50 @@ public class AdminController {
 		List<String> list = new ArrayList<>();
 		list.add("37");list.add("127");
 		list.add("20");list.add("30");
+		list.add("0");
 		map.put(busidx, list);
 	}
+	
+	@RequestMapping("/admin/driverlogin.do")
+	@ResponseBody
+	public String driverlogin(CommandMap cmd,HttpSession session) throws Exception {
+		//get BUSIDX ID PWD
+		System.out.println(cmd.getMap().toString());
+		Map<String,Object> map = new HashMap<String,Object>();
+		map= driverService.selectDriverOne(cmd.getMap());
+		JSONObject result= new JSONObject();
+		if (map==null) {
+			result.put("result_login","fail");
+		}else {
+			//result.put("driverinfo", map);
+			initData((String)cmd.get("busidx"));
+			result.put("result_login","success");
+			cmd.put("service", "1");
+			cmd.put("driveridx",map.get("DRIVERIDX"));
+			busService.updateBus(cmd.getMap());
+		}		
+		return cmd.toString()+map.toString();		
+	}
+	
+	
+	@RequestMapping("/admin/driverlogout.do")
+	@ResponseBody
+	public String driverlogout(@RequestParam("busidx")String busidx) throws Exception{
+		CommandMap cmd = new CommandMap();
+		cmd.put("busidx", busidx);
+		Map map= driverService.selectDriverOne(cmd.getMap());
+		
+		return map.toString();
+	}
+	
+	
+	
+	
+	
 	@RequestMapping(value="/admin/retemp.do", method=RequestMethod.GET)
 	@ResponseBody
 	public String retemp(@RequestParam("busidx")String busidx,@RequestParam("temp")String temp,@RequestParam("humid")String humid) {
+		System.out.println("busidx: "+busidx+" temp: "+temp+" humid: "+humid);
 		map.get(busidx).set(2,temp);
 		map.get(busidx).set(3,humid);
 		return "success";
@@ -60,16 +106,26 @@ public class AdminController {
 	@RequestMapping(value= "/admin/relocation.do", method=RequestMethod.POST)
 	@ResponseBody
 	public String relocation(@RequestParam("busidx")String busidx,@RequestParam("lat")String lat,@RequestParam("lon")String lon) {
-		System.out.println(busidx+"Sdf"+lat+"SDf"+lon);
+		System.out.println("busidx: "+busidx+" lat: "+lat+" lon: "+lon);
 		map.get(busidx).set(0,lat);
 		map.get(busidx).set(1,lon);
 		return "success";
 	}
 	
-	
-	@RequestMapping("/admin/testtemp.do")
-	public String testtemp() {
+	@RequestMapping(value="/admin/recandata.do", method=RequestMethod.GET)
+	@ResponseBody
+	public String recandata(@RequestParam("busidx")String busidx,@RequestParam("distance")String distance) {
+		map.get(busidx).set(4,distance);
+		return "success";
+	}
+	@RequestMapping("/admin/candata.do")
+	@ResponseBody
+	public String candata(@RequestParam("busidx") String busidx) {
+		JSONObject jo = new JSONObject();
+		
+		
 		return "admin/temp";
+		
 	}
 	
 	
@@ -129,7 +185,7 @@ public class AdminController {
 	//move each bus information
 	@RequestMapping("/admin/dash.do")
 	public String admindash(Model model,@RequestParam("busidx") String busidx,HttpSession session) throws Exception {
-		initData(busidx);
+		
 		model.addAttribute("center","testdash");			
 		session.setAttribute("busidx", busidx);		
 		CommandMap check = new CommandMap();		
@@ -191,7 +247,9 @@ public class AdminController {
 	@RequestMapping("admin/buson.do")
 	@ResponseBody
 	public String buson(CommandMap cmd) throws Exception {
+		cmd.put("DRIVERIDX","1");
 		cmd.put("SERVICE","1");
+		cmd.put("BUSIDX","1");
 		busService.updateBus(cmd.getMap());
 		return "busOn";
 	}
@@ -200,12 +258,9 @@ public class AdminController {
 	@RequestMapping("admin/busoff.do")
 	@ResponseBody
 	public String busoff(CommandMap cmd) throws Exception {
+		cmd.put("DRIVERIDX","0");
+		cmd.put("BUSIDX","1");
 		cmd.put("SERVICE","0");
-		cmd.put("LAT", "0");
-		cmd.put("LON", "0");
-		cmd.put("TEMP", "0");
-		cmd.put("HUMID", "0");
-		cmd.put("DRIVERIDX", "0");
 		busService.updateBus(cmd.getMap());
 		return "busOFF";
 	}

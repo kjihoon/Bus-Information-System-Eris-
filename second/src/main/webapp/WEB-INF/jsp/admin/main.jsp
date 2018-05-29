@@ -134,7 +134,7 @@ background-color: #97C0B7;
           </a>
           <ul class="sidenav-second-level collapse" id="collapseComponents">
             <li>
-              <a href="navbar.do">Frame</a>
+              <a href="busdash.do">Detail Information</a>
             </li>
             <li>
               <a href="cards.do">Other</a>

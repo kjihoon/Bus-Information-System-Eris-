@@ -3,8 +3,10 @@ package second.sample.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -17,6 +19,7 @@ public class BusController {
 	@Autowired
 	private BusService busService;
 	
+	JSONObject jo = new JSONObject();
 	
 	@RequestMapping("bustest.do")
 	@ResponseBody
@@ -24,6 +27,10 @@ public class BusController {
 		List<Map<String, Object>> map =busService.selectBusList(cmd.getMap());
 		return map.toString();
 	}
-	
+	@RequestMapping("/admin/busdash.do")
+	public String busdash(Model model) {
+		model.addAttribute("center","busdash");
+		return "admin/main";
+	}
 	
 }

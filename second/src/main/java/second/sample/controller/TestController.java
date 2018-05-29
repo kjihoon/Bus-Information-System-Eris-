@@ -1,5 +1,7 @@
 package second.sample.controller;
 
+import java.util.Random;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +23,13 @@ public class TestController {
 	public String login(CommandMap cmd) {
 		cmd.put("sdf", "sdf");
 		System.out.println(cmd.getMap().toString());
+		
+		
+		/*Random rand = new Random();
+		double sd = 1.5;
+		double mean = 50;
+		double rand2 = rand.nextGaussian()*sd+mean;*/
+		
 		return  cmd.toString();
 	}
 }
