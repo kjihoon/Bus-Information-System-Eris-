@@ -48,13 +48,13 @@
 			<mapping path="/admin/**" />
 			<beans:bean id="loginInterceptor_admin"
 				class="second.common.logger.LoginInterceptor_admin"></beans:bean>
-		</interceptor> -->
-	<!-- 	<interceptor>
+		</interceptor>
+		<interceptor>
 			<mapping path="/driver/**" />
 			<beans:bean id="loginInterceptor_driver"
 				class="second.common.logger.LoginInterceptor_driver"></beans:bean>
 		</interceptor>
-		 -->
+ -->		
 	</interceptors>
 	<context:component-scan base-package="second" />
 

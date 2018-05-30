@@ -40,25 +40,29 @@ public class AdminController {
 	@Autowired
 	private DriverService driverService;
 	
+
+	private static Map <String,List<String>> map = new HashMap<>();
+	
 	// list 0 - lat
 	// list 1 - lon
 	// list 2 - temp
 	// list 3 - humid
 	// list 4 - distance
 	// list 5 - xx
-	// ...
-	private static Map <String,List<String>> map = new HashMap<>();
-	
-	
 	//최초 요청시 초기화
 	private void initData(String busidx) {
+		System.out.println(busidx+"운행 시작");
 		List<String> list = new ArrayList<>();
 		list.add("37");list.add("127");
 		list.add("20");list.add("30");
-		list.add("0");
+		list.add("0");list.add("0");
+		list.add("0");list.add("0");
+		list.add("0");list.add("0");
+		list.add("0");list.add("0");
+		
 		map.put(busidx, list);
 	}
-	
+	//http://localhost/first/admin/driverlogin.do?id=kwak&pwd=123&busidx=5
 	@RequestMapping("/admin/driverlogin.do")
 	@ResponseBody
 	public String driverlogin(CommandMap cmd,HttpSession session) throws Exception {
@@ -74,7 +78,8 @@ public class AdminController {
 			initData((String)cmd.get("busidx"));
 			result.put("result_login","success");
 			cmd.put("service", "1");
-			cmd.put("driveridx",map.get("DRIVERIDX"));
+			cmd.put("driveridx",map.get("DRIVERIDX"));			
+			
 			busService.updateBus(cmd.getMap());
 		}		
 		return cmd.toString()+map.toString();		
@@ -86,8 +91,10 @@ public class AdminController {
 	public String driverlogout(@RequestParam("busidx")String busidx) throws Exception{
 		CommandMap cmd = new CommandMap();
 		cmd.put("busidx", busidx);
-		Map map= driverService.selectDriverOne(cmd.getMap());
-		
+		cmd.put("driveridx","0");
+		cmd.put("service", "0");
+		busService.updateBus(cmd.getMap());
+		map.remove(busidx);
 		return map.toString();
 	}
 	
@@ -107,6 +114,7 @@ public class AdminController {
 	@ResponseBody
 	public String relocation(@RequestParam("busidx")String busidx,@RequestParam("lat")String lat,@RequestParam("lon")String lon) {
 		System.out.println("busidx: "+busidx+" lat: "+lat+" lon: "+lon);
+		
 		map.get(busidx).set(0,lat);
 		map.get(busidx).set(1,lon);
 		return "success";
@@ -122,13 +130,9 @@ public class AdminController {
 	@ResponseBody
 	public String candata(@RequestParam("busidx") String busidx) {
 		JSONObject jo = new JSONObject();
-		
-		
 		return "admin/temp";
 		
 	}
-	
-	
 	//real-time location
 		@RequestMapping("/admin/location.do")
 		@ResponseBody
@@ -170,18 +174,13 @@ public class AdminController {
 	//after login.. click main view
 	@RequestMapping("/admin/main.do")
 	public String adminmain(Model model,HttpSession session,CommandMap cmd) throws Exception {
-			
+		log.debug("메인을 누르셨습니다.");
 		session.removeAttribute("busInfo");
 		List<Map<String, Object>> allbus =busService.selectBusList(cmd.getMap());
 		model.addAttribute("allbus",allbus);			
 
 		return "admin/main";
 	}
-	
-
-	
-	
-	
 	//move each bus information
 	@RequestMapping("/admin/dash.do")
 	public String admindash(Model model,@RequestParam("busidx") String busidx,HttpSession session) throws Exception {
@@ -189,7 +188,7 @@ public class AdminController {
 		model.addAttribute("center","testdash");			
 		session.setAttribute("busidx", busidx);		
 		CommandMap check = new CommandMap();		
-		check.put("BUSIDX", busidx);			
+		check.put("busidx", busidx);			
 		Map map = busService.selectBusOne(check.getMap());
 		session.setAttribute("busInfo",map);	
 		return "admin/main";
@@ -221,9 +220,7 @@ public class AdminController {
 		String result="admin/login"; 
 		if (map==null) {
 			model.addAttribute("result","관리자의 ID 또는 PWD가 잘못되었습니다.");
-			log.debug("==="+cmd.get("id")+"login fail===");
 		}else {
-			log.debug("==="+cmd.get("id")+"login Success===");
 			session.setAttribute("adminInfo", map);
 			System.out.println(cmd.getMap());
 			List<Map<String, Object>> allbus =busService.selectBusList(cmd.getMap());
@@ -240,9 +237,6 @@ public class AdminController {
 		model.addAttribute("center","testdash");
 		return "admin/main";
 	}
-	
-	
-	
 	//Driver 운행 시작
 	@RequestMapping("admin/buson.do")
 	@ResponseBody
@@ -264,11 +258,6 @@ public class AdminController {
 		busService.updateBus(cmd.getMap());
 		return "busOFF";
 	}
-	
-	
-	
-	
-
 	@RequestMapping("admin/testmap.do")
 	public String adminforgot() {
 		return "admin/testmap";

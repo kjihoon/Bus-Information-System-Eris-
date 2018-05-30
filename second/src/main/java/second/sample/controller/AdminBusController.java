@@ -25,10 +25,6 @@ public class AdminBusController {
 	@Autowired
 	private BusService busService;
 	
-	@RequestMapping("admin/busControll.do")
-	public String busContoll() {
-		return "admin/busControll";
-	}
 	
 
 }

@@ -26,7 +26,14 @@ public class DriverController {
 	
 	@Autowired
 	private BusService busService;
+		
 	
+		@RequestMapping("/driver/main.do")
+		public String drivermain() {
+			return "driver/main";
+		}
+		
+		
 		@RequestMapping(value="/driver/login.do", method = { RequestMethod.GET, RequestMethod.POST })
 		@ResponseBody
 		public String adminloginimp(Model model,HttpSession session,CommandMap cmd) throws Exception {
