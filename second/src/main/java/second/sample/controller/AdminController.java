@@ -1,7 +1,7 @@
 package second.sample.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +65,7 @@ public class AdminController {
 		map.put(busidx, list);
 	}
 	//http://localhost/first/admin/driverlogin.do?id=kwak&pwd=123&busidx=5
-	@RequestMapping("/admin/driverlogin.do")
+	@RequestMapping(value="/admin/driverlogin.do" ,method=RequestMethod.POST)
 	@ResponseBody
 	public String driverlogin(CommandMap cmd,HttpSession session) throws Exception {
 		//get BUSIDX ID PWD
@@ -71,18 +73,24 @@ public class AdminController {
 		Map<String,Object> map = new HashMap<String,Object>();
 		map= driverService.selectDriverOne(cmd.getMap());
 		JSONObject result= new JSONObject();
+		JSONArray jr= new JSONArray();
 		if (map==null) {
 			result.put("result_login","fail");
+			jr.add(result);
 		}else {
-			//result.put("driverinfo", map);
 			initData((String)cmd.get("busidx"));
 			result.put("result_login","success");
+			result.putAll(map);
+			jr.add(result);
 			cmd.put("service", "1");
 			cmd.put("driveridx",map.get("DRIVERIDX"));			
-			
 			busService.updateBus(cmd.getMap());
+			Map businfo =busService.selectBusOne(cmd.getMap());
+			JSONObject busjson = new JSONObject();
+			busjson.putAll(businfo);
+			jr.add(busjson);
 		}		
-		return cmd.toString()+map.toString();		
+		return jr.toJSONString();		
 	}
 	
 	
@@ -106,15 +114,17 @@ public class AdminController {
 	@ResponseBody
 	public String retemp(@RequestParam("busidx")String busidx,@RequestParam("temp")String temp,@RequestParam("humid")String humid) {
 		System.out.println("busidx: "+busidx+" temp: "+temp+" humid: "+humid);
+		log.debug("temp,"+busidx+","+temp+"/"+humid);
 		map.get(busidx).set(2,temp);
 		map.get(busidx).set(3,humid);
+		
 		return "success";
 	}
 	@RequestMapping(value= "/admin/relocation.do", method=RequestMethod.POST)
 	@ResponseBody
 	public String relocation(@RequestParam("busidx")String busidx,@RequestParam("lat")String lat,@RequestParam("lon")String lon) {
 		System.out.println("busidx: "+busidx+" lat: "+lat+" lon: "+lon);
-		
+		log.debug("location,"+busidx+","+lat+"/"+lon);
 		map.get(busidx).set(0,lat);
 		map.get(busidx).set(1,lon);
 		return "success";
@@ -128,10 +138,16 @@ public class AdminController {
 	}
 	@RequestMapping("/admin/candata.do")
 	@ResponseBody
-	public String candata(@RequestParam("busidx") String busidx) {
-		JSONObject jo = new JSONObject();
-		return "admin/temp";
-		
+	public String candata(@RequestParam("can") String can) {
+		ObjectMapper mapper = new ObjectMapper(); 
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			map = mapper.readValue(can, new TypeReference<Map<String, String>>(){});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println(map.toString());
+		return map.toString();		
 	}
 	//real-time location
 		@RequestMapping("/admin/location.do")
@@ -174,7 +190,6 @@ public class AdminController {
 	//after login.. click main view
 	@RequestMapping("/admin/main.do")
 	public String adminmain(Model model,HttpSession session,CommandMap cmd) throws Exception {
-		log.debug("메인을 누르셨습니다.");
 		session.removeAttribute("busInfo");
 		List<Map<String, Object>> allbus =busService.selectBusList(cmd.getMap());
 		model.addAttribute("allbus",allbus);			

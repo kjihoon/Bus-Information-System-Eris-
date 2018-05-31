@@ -22,20 +22,21 @@
     <!-- 날짜별 로그 파일 생성 -->
     <appender name="rollingFile" class="org.apache.log4j.DailyRollingFileAppender">
         <!-- 날짜별로  로그를 남김. 파일명.확장자.DatePattern으로 정의 함-->  
-        <param name="File" value="/LOG/all3.log"/>
+        <param name="File" value="/LOG/busInformation.log"/>
         <param name="Append" value="true"/>
         <param name="DatePattern" value="'.'yyyy-MM-dd"/> 
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%-5p: %c - %m%n" />
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}, %m%n" />
         </layout>   
     </appender>
+    
    <!-- Application Loggers -->
    <logger name="second" additivity="false">
       <level value="debug" />
       <appender-ref ref="console" />
    </logger>
    
-     <category name="second.sample.controller.AdminBusController" additivity="false">
+     <category name="second.sample.controller.AdminController" additivity="false">
         <level value="DEBUG"/>        
         <appender-ref ref="rollingFile" />
     </category>
