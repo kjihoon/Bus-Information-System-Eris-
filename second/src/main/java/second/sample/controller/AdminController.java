@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Qualifier;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -29,9 +30,7 @@ import second.driver.service.DriverService;
 @Controller
 public class AdminController {
 
-	Logger log = Logger.getLogger(this.getClass());
-	
-	
+		
 	
 	@Autowired
 	private AdminService adminService;
@@ -42,15 +41,16 @@ public class AdminController {
 	@Autowired
 	private DriverService driverService;
 	
+	//Logger log = Logger.getLogger("rollingFile");
+    //private Logger log = Logger.getLogger("rolling5");
 
 	private static Map <String,List<String>> map = new HashMap<>();
-	
+	private static Map <String,Logger> logmap = new HashMap<>();
 	// list 0 - lat
 	// list 1 - lon
 	// list 2 - temp
 	// list 3 - humid
-	// list 4 - distance
-	// list 5 - xx
+	// list 4~10 - candata
 	//최초 요청시 초기화
 	private void initData(String busidx) {
 		System.out.println(busidx+"운행 시작");
@@ -60,9 +60,10 @@ public class AdminController {
 		list.add("0");list.add("0");
 		list.add("0");list.add("0");
 		list.add("0");list.add("0");
-		list.add("0");list.add("0");
+		list.add("0");
 		
 		map.put(busidx, list);
+		logmap.put("rolling"+busidx, Logger.getLogger("rolling"+busidx));
 	}
 	//http://localhost/first/admin/driverlogin.do?id=kwak&pwd=123&busidx=5
 	@RequestMapping(value="/admin/driverlogin.do" ,method=RequestMethod.POST)
@@ -81,6 +82,7 @@ public class AdminController {
 			initData((String)cmd.get("busidx"));
 			result.put("result_login","success");
 			result.putAll(map);
+			result.remove("D_REGISTERDATE");
 			jr.add(result);
 			cmd.put("service", "1");
 			cmd.put("driveridx",map.get("DRIVERIDX"));			
@@ -88,6 +90,7 @@ public class AdminController {
 			Map businfo =busService.selectBusOne(cmd.getMap());
 			JSONObject busjson = new JSONObject();
 			busjson.putAll(businfo);
+			busjson.remove("REGIDATE");
 			jr.add(busjson);
 		}		
 		return jr.toJSONString();		
@@ -114,7 +117,7 @@ public class AdminController {
 	@ResponseBody
 	public String retemp(@RequestParam("busidx")String busidx,@RequestParam("temp")String temp,@RequestParam("humid")String humid) {
 		System.out.println("busidx: "+busidx+" temp: "+temp+" humid: "+humid);
-		log.debug("temp,"+busidx+","+temp+"/"+humid);
+		logmap.get("rolling"+busidx).debug("temp,"+busidx+","+temp+"/"+humid);
 		map.get(busidx).set(2,temp);
 		map.get(busidx).set(3,humid);
 		
@@ -124,31 +127,49 @@ public class AdminController {
 	@ResponseBody
 	public String relocation(@RequestParam("busidx")String busidx,@RequestParam("lat")String lat,@RequestParam("lon")String lon) {
 		System.out.println("busidx: "+busidx+" lat: "+lat+" lon: "+lon);
-		log.debug("location,"+busidx+","+lat+"/"+lon);
+		logmap.get("rolling"+busidx).debug("location,"+busidx+","+lat+"/"+lon);
 		map.get(busidx).set(0,lat);
 		map.get(busidx).set(1,lon);
 		return "success";
 	}
 	
-	@RequestMapping(value="/admin/recandata.do", method=RequestMethod.GET)
+	@RequestMapping(value="/admin/recandata.do", method=RequestMethod.POST)
 	@ResponseBody
-	public String recandata(@RequestParam("busidx")String busidx,@RequestParam("distance")String distance) {
-		map.get(busidx).set(4,distance);
-		return "success";
+	public String recandata(CommandMap cmd) {
+		
+		System.out.println(cmd.getMap().toString());
+		String engineLoadValue = (String) cmd.get("engineLoadValue");
+		String engineCoolantTemperature = (String) cmd.get("engineCoolantTemperature");
+		String enginRPM = (String) cmd.get("enginRPM");
+		String vehicleSpeed = (String) cmd.get("vehicleSpeed");
+		String MAF = (String) cmd.get("MAF");
+		String throttlePosition = (String) cmd.get("throttlePosition");
+		String busidx = (String) cmd.get("busidx");
+		map.get(busidx).set(4, engineLoadValue);
+		map.get(busidx).set(5, engineCoolantTemperature);
+		map.get(busidx).set(6, enginRPM);
+		map.get(busidx).set(7, vehicleSpeed);
+		map.get(busidx).set(8, MAF);
+		map.get(busidx).set(9, throttlePosition);
+		logmap.get("rolling"+busidx).debug("temp,"+busidx+","+engineLoadValue+"/"+engineCoolantTemperature+"/"+enginRPM+"/"+vehicleSpeed+"/"+MAF+"/"+throttlePosition);
+		return cmd.getMap().toString();		
 	}
 	@RequestMapping("/admin/candata.do")
 	@ResponseBody
-	public String candata(@RequestParam("can") String can) {
-		ObjectMapper mapper = new ObjectMapper(); 
-		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-			map = mapper.readValue(can, new TypeReference<Map<String, String>>(){});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println(map.toString());
-		return map.toString();		
+	public String candata(@RequestParam("busidx") String busidx) {
+		//actual data
+		JSONObject can = new JSONObject();
+		can.put("engineLoadValue",map.get(busidx).get(4));
+		can.put("engineCoolantTemperature", map.get(busidx).get(5));
+		can.put("enginRPM", map.get(busidx).get(6));
+		can.put("vehicleSpeed", map.get(busidx).get(7));
+		can.put("MAF", map.get(busidx).get(8));
+		can.put("throttlePosition", map.get(busidx).get(9));
+		System.out.println("BUS"+busidx+can.toJSONString());
+		return can.toJSONString();
 	}
+	
+	
 	//real-time location
 		@RequestMapping("/admin/location.do")
 		@ResponseBody
@@ -185,6 +206,8 @@ public class AdminController {
 	public String allbus(CommandMap cmd,Model model) throws Exception {
 		List<Map<String, Object>> allbus =busService.selectBusList(cmd.getMap());
 		model.addAttribute("allbus",allbus);
+
+		
 		return "admin/main";
 	}
 	//after login.. click main view

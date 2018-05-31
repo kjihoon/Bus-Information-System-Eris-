@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="contents">
+
+	<select id="selectContentsList" parameterType="hashmap"
+		resultType="hashmap">
+             select * from contents  where boardidx =#{boardidx}
+	</select>
+		
+	<select id="selectContentsOne" parameterType="hashmap"
+		resultType="hashmap">        
+            <![CDATA[
+            select * from contents where contentsidx =#{contentsidx}
+            ]]>   
+	</select>
+	
+	<insert id="insertContents" parameterType="hashmap">
+		<![CDATA[
+		insert into contents values (seq_boardidx.nextval,#{title},#{contents},sysdate,#{category},seq_contentidx.nextval,#{useridx}) 
+		]]>
+	</insert>
+</mapper>

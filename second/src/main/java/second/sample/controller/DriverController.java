@@ -1,6 +1,7 @@
 package second.sample.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -12,10 +13,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import second.bus.service.BusService;
 import second.common.common.CommandMap;
+import second.contents.service.ContentsService;
 import second.driver.service.DriverService;
 
 @Controller
@@ -26,6 +27,9 @@ public class DriverController {
 	
 	@Autowired
 	private BusService busService;
+	
+	@Autowired
+	private ContentsService contentsService;
 		
 	
 		@RequestMapping("/driver/main.do")
@@ -48,6 +52,27 @@ public class DriverController {
 			}		
 			return result.toJSONString();
 		}
+		
+		@RequestMapping("/driver/contents.do")
+		public String contents(Model model,CommandMap cmd,HttpSession session) throws Exception {
+			List<Map<String, Object>> allcontents =contentsService.selectContentsList(cmd.getMap());
+			session.setAttribute("boardidx",(String)cmd.getMap().get("boardidx"));
+			model.addAttribute("allcontents",allcontents);
+			return "driver/main";
+		}
+		
+		//boardidx and contentsidx
+		@RequestMapping("/driver/contentsone.do")
+		public String contentsone(Model model,CommandMap cmd) throws Exception {
+			List<Map<String, Object>> allcontents =contentsService.selectContentsList(cmd.getMap());
+			model.addAttribute("allcontents",allcontents);
+			
+			Map<String, Object> map = contentsService.selectContentsOne(cmd.getMap());
+			model.addAttribute("contentsone",map);
+			return "driver/main";
+		}
+		
+		
 		
 		/*http://localhost/first/driver/driverinfo.do?id=kwak&pwd=123*/		
 		@RequestMapping(value="/driver/driverinfo.do", method = { RequestMethod.GET, RequestMethod.POST })

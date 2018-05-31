@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -670,29 +674,43 @@ body{
                                     </tr>
                                 </thead>
                                 <tbody>
+                                <c:forEach items="${allcontents}" var="contents">
                                     <tr>
                                         <td class="type"><i class="fa fa-file-text-o text-primary"></i></td>
-                                        <td class="name truncate"><a href="#">Meeting Notes.txt</a></td>
-                                        <td class="date">Sep 23, 2015</td>
-                                        <td class="size">18 KB</td>
+                                        <td class="name truncate"><a href="contentsone.do?boardidx=${boardidx }&contentsidx=${contents.CONTENTSIDX }">${contents.TITLE }</a></td>
+                                        <td class="date">${contents.WDATE }</td>
+                                        <td class="size">${contents.CATEGORY }</td>
                                     </tr>
-                                    <tr>
-                                        <td class="type"><i class="fa fa-file-powerpoint-o text-warning"></i></td>
-                                        <td class="name truncate"><a href="#">Deck Lorem Ipsum.ppt</a></td>
-                                        <td class="date">Sep 20, 2015</td>
-                                        <td class="size">136 MB</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="type"><i class="fa fa-file-excel-o text-success"></i></td>
-                                        <td class="name truncate"><a href="#">Project Tasks.csv</a></td>
-                                        <td class="date">Aug 16, 2015</td>
-                                        <td class="size">32 KB</td>
-                                    </tr>
-                                   
+                                </c:forEach>    
                                 </tbody>
                             </table>
                         </div>
+                          <hr>
+                          <br><br>
+                          <c:if test="${contentsone !=null}">
+                          <div class="table-responsive drive-items-table-wrapper">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="type"></th>
+                                        <th class="name truncate">글 내용</th>
+                                        <th class="date">유저정보</th>
+                                        <th class="size">카테고리</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="type"><i class="fa fa-file-text-o text-primary"></i></td>
+                                        <td class="name truncate">${contentsone.CONTENTS }</td>
+                                        <td class="date">${contentsone.USERIDX }</td>
+                                        <td class="size">${contentsone.CATEGORY }</td>
+                                    </tr>  
+                                </tbody>
+                            </table>
+                        </div>
+                        </c:if>
                     </div>
+                                      
                 </div>
             </div>
         </section>
