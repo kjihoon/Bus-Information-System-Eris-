@@ -41,6 +41,7 @@
  			<div id="map-canvas" class="card-body" style="height:450px"></div>
  		</div>
  	</div>
+ 
  	<div class="col-lg-4">
         <!-- Example Notifications Card-->
           <div class="card mb-3">

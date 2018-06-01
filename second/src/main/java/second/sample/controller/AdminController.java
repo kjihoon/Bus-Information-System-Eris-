@@ -117,9 +117,13 @@ public class AdminController {
 	@ResponseBody
 	public String retemp(@RequestParam("busidx")String busidx,@RequestParam("temp")String temp,@RequestParam("humid")String humid) {
 		System.out.println("busidx: "+busidx+" temp: "+temp+" humid: "+humid);
-		logmap.get("rolling"+busidx).debug("temp,"+busidx+","+temp+"/"+humid);
-		map.get(busidx).set(2,temp);
-		map.get(busidx).set(3,humid);
+		if (map.get(busidx)!=null) {
+			map.get(busidx).set(2,temp);
+			map.get(busidx).set(3,humid);
+			logmap.get("rolling"+busidx).debug("temp,"+busidx+","+temp+"/"+humid);
+		}else {
+			System.out.println("드라이버 로그인 필요");
+		}
 		
 		return "success";
 	}
@@ -127,15 +131,48 @@ public class AdminController {
 	@ResponseBody
 	public String relocation(@RequestParam("busidx")String busidx,@RequestParam("lat")String lat,@RequestParam("lon")String lon) {
 		System.out.println("busidx: "+busidx+" lat: "+lat+" lon: "+lon);
-		logmap.get("rolling"+busidx).debug("location,"+busidx+","+lat+"/"+lon);
-		map.get(busidx).set(0,lat);
-		map.get(busidx).set(1,lon);
+		if (map.get(busidx)!=null) {
+			
+			map.get(busidx).set(0,lat);
+			map.get(busidx).set(1,lon);
+			logmap.get("rolling"+busidx).debug("location,"+busidx+","+lat+"/"+lon);
+		}else {
+			System.out.println("드라이버 로그인 필요");
+		}
 		return "success";
 	}
 	
-	@RequestMapping(value="/admin/recandata.do", method=RequestMethod.POST)
+	@RequestMapping(value="/admin/recandata.do", method=RequestMethod.GET)
 	@ResponseBody
 	public String recandata(CommandMap cmd) {
+		
+		System.out.println(cmd.getMap().toString());
+		String engineLoadValue = (String) cmd.get("engineLoadValue");
+		String engineCoolantTemperature = (String) cmd.get("engineCoolantTemperature");
+		String enginRPM = (String) cmd.get("enginRPM");
+		String MAF = (String) cmd.get("MAF");
+		String throttlePosition = (String) cmd.get("throttlePosition");
+		String busidx = (String) cmd.get("busidx");
+		map.get(busidx).set(4, engineLoadValue);
+		map.get(busidx).set(5, engineCoolantTemperature);
+		map.get(busidx).set(6, enginRPM);
+		map.get(busidx).set(8, MAF);
+		map.get(busidx).set(9, throttlePosition);
+		logmap.get("rolling"+busidx).debug("candata,"+busidx+","+engineLoadValue+"/"+engineCoolantTemperature+"/"+enginRPM+"/"+MAF+"/"+throttlePosition);
+		return cmd.getMap().toString();		
+	}
+	
+	@RequestMapping(value="/admin/respeed.do", method=RequestMethod.GET)
+	@ResponseBody
+	public String respeed(CommandMap cmd) {
+		map.get(cmd.get("busidx")).set(10, (String) cmd.get("vehiclespeed"));
+		System.out.println(cmd.getMap().toString());
+		return "success";
+	}
+	
+	/*@RequestMapping(value="/admin/recandata.do", method=RequestMethod.POST)
+	@ResponseBody
+	public String recandata(String engineLoadValue,String engineCoolantTemperature,String enginRPM,String vehicleSpeed,String MAF,String throttlePosition,String busidx ) {
 		
 		System.out.println(cmd.getMap().toString());
 		String engineLoadValue = (String) cmd.get("engineLoadValue");
@@ -152,8 +189,10 @@ public class AdminController {
 		map.get(busidx).set(8, MAF);
 		map.get(busidx).set(9, throttlePosition);
 		logmap.get("rolling"+busidx).debug("temp,"+busidx+","+engineLoadValue+"/"+engineCoolantTemperature+"/"+enginRPM+"/"+vehicleSpeed+"/"+MAF+"/"+throttlePosition);
-		return cmd.getMap().toString();		
-	}
+		return "success";		
+	}*/
+	
+	
 	@RequestMapping("/admin/candata.do")
 	@ResponseBody
 	public String candata(@RequestParam("busidx") String busidx) {

@@ -17,14 +17,7 @@ import second.bus.service.BusService;
 import second.common.common.CommandMap;
 
 @Controller
-public class AdminBusController {
-	
-	@Autowired
-	private AdminService adminService;
-	
-	@Autowired
-	private BusService busService;
+public class LogFileController {
 	
 	
-
 }
