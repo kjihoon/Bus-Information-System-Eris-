@@ -75,8 +75,9 @@ public class Scheduler {
 		
 	}*/
 	
-	@Scheduled(cron="0 43 * * * *")
+	@Scheduled(cron="0 59 * * * *")
 	public void anlCanData() {
+		log.debug("schedule 실행");
 		usingR useR = new usingR();
 		List<String> fileList = new ArrayList<>();
 		 Date dt = new Date();

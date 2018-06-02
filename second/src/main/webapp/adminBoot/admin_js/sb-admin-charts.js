@@ -110,7 +110,7 @@ var myLineChart = new Chart(ctx, {
 */
 
 // -- Pie Chart Example
-var ctx = document.getElementById("myPieChart");
+/*var ctx = document.getElementById("myPieChart");
 var myPieChart = new Chart(ctx, {
   type: 'pie',
   data: {
@@ -121,3 +121,4 @@ var myPieChart = new Chart(ctx, {
     }],
   },
 });
+*/

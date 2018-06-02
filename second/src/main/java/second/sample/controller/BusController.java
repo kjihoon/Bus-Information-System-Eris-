@@ -1,14 +1,12 @@
 package second.sample.controller;
 
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpSession;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import second.bus.service.BusService;
 import second.common.common.CommandMap;
@@ -21,16 +19,10 @@ public class BusController {
 	
 	JSONObject jo = new JSONObject();
 	
-	@RequestMapping("bustest.do")
-	@ResponseBody
-	public String bustest(CommandMap cmd) throws Exception {
-		List<Map<String, Object>> map =busService.selectBusList(cmd.getMap());
-		return map.toString();
+	@RequestMapping("/bus/can.do")
+	public String bustest(CommandMap cmd) {
+		return "bus/can";
 	}
-	@RequestMapping("/admin/busdash.do")
-	public String busdash(Model model) {
-		model.addAttribute("center","busdash");
-		return "admin/main";
-	}
+	
 	
 }

@@ -36,10 +36,9 @@
    
         <!-- BUSIDX4-->
     <appender name="rollingFile4" class="org.apache.log4j.DailyRollingFileAppender">
-        <!-- 날짜별로  로그를 남김. 파일명.확장자.DatePattern으로 정의 함-->  
         <param name="File" value="/LOG/busInformation_idx4.log"/>
         <param name="Append" value="true"/>
-        <param name="DatePattern" value="'.'yyyy-MM-dd"/> 
+        <param name="DatePattern" value="'.'yyyy-MM-dd-HH"/> 
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}, %m%n" />
         </layout>   

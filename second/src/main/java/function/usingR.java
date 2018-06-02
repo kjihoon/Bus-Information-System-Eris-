@@ -27,7 +27,7 @@ public class usingR {
         try{        	
         	for (int i =0;i<fileList.size();i++) {
         		map= new HashMap<>(); 
-        		File file = new File("C:\\LOG\\"+fileList.get(i)+".txt");
+        		File file = new File("C:\\LOG\\"+fileList.get(i)+".log");
 	            if (file.exists()) {
 	            	 filereader = new FileReader(file);
 	                 bufreader = new BufferedReader(filereader);
@@ -59,7 +59,60 @@ public class usingR {
 	                 
 	                 result.put(fileList.get(i), map);
 	            }	            
-        	}         	
+        	}
+        	RConnection rconn = null;
+        	String v1 = null;
+    		String v2 = null;
+    		String v3 =null;
+    		String v4 = null;
+    		for (int i=0;i<=1;i++) {
+    			v1 = result.get(fileList.get(i)).get("V1").toString();
+        		v2 = result.get(fileList.get(i)).get("V2").toString();
+        		v3 = result.get(fileList.get(i)).get("V3").toString();
+        		v4 = result.get(fileList.get(i)).get("V4").toString();
+        		
+        		v1 = v1.replace("[","");
+        		v1 = v1.replace("]","");
+        		v1 = "c("+v1+")";
+        		
+        		v2 = v2.replace("[","");
+        		v2 = v2.replace("]","");
+        		v2 = "c("+v2+")";
+        		
+        		v3 = v3.replace("[","");
+        		v3 = v3.replace("]","");
+        		v3 = "c("+v3+")";
+        		
+        		v4 = v4.replace("[","");
+        		v4 = v4.replace("]","");
+        		v4 = "c("+v4+")";
+        		
+                //////////////////////////////////////Connect R
+        		
+        			try {
+        				rconn = new RConnection("localhost",6311);
+        				rconn.eval("V1<-"+v1);
+        				rconn.eval("V2<-"+v2);
+        				rconn.eval("V3<-"+v3);
+        				rconn.eval("V4<-"+v4);
+        				
+        				rconn.eval("data<-data.frame(V1,V2,V3,V4)");
+        				rconn.eval(" source('~/Rjihoon/eris.R')");
+        				String ss = "readData(data,idx="+"'"+fileList.get(i)+"'"+")";
+        				rconn.eval(ss);
+        				
+        			} catch (Exception e) {
+        				e.printStackTrace();
+        			} finally {
+        				if (rconn!=null) {
+        					rconn.close();
+        				}			
+        			}    	
+    		}
+    	
+        	
+        	
+        	
         }catch(Exception e) {
         }finally {
         	if (filereader!=null) {
@@ -79,53 +132,13 @@ public class usingR {
         	
         }
 		
-		String v1 = map.get("V1").toString();
-		String v2 = map.get("V2").toString();
-		String v3 = map.get("V3").toString();
-		String v4 = map.get("V4").toString();
 		
-		v1 = v1.replace("[","");
-		v1 = v1.replace("]","");
-		v1 = "c("+v1+")";
-		
-		v2 = v2.replace("[","");
-		v2 = v2.replace("]","");
-		v2 = "c("+v2+")";
-		
-		v3 = v3.replace("[","");
-		v3 = v3.replace("]","");
-		v3 = "c("+v3+")";
-		
-		v4 = v4.replace("[","");
-		v4 = v4.replace("]","");
-		v4 = "c("+v4+")";
-		
-             //////////////////////////////////////Connect R
-		RConnection rconn = null;
-			try {
-				rconn = new RConnection("localhost",6311);
-				rconn.eval("V1<-"+v1);
-				rconn.eval("V2<-"+v2);
-				rconn.eval("V3<-"+v3);
-				rconn.eval("V4<-"+v4);
-				
-				rconn.eval("data<-data.frame(V1,V2,V3,V4)");
-				rconn.eval(" source('~/Rjihoon/eris.R')");
-				rconn.eval("readData(data)");
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				if (rconn!=null) {
-					rconn.close();
-				}			
-			}
 		
 	}
 	public static void main(String [] args) {
 		List<String> fileList = new ArrayList<>();
-		fileList.add("busInformation_idx506-01-04");
-		fileList.add("busInformation_idx506-01-05");
+		fileList.add("busInformation_idx5");
+		fileList.add("busInformation_idx4");
 		useR(fileList);
 	}
 }

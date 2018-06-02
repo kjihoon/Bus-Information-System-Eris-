@@ -99,38 +99,35 @@ td {
 	        <div class="card-header">
 	          <i class="fa fa-area-chart"></i> 현재 버스 정보  <!--dirveridx 기사님 이름으로 데체  -->
 	    	</div>
-<table >
-	<tr>
-		<td>Button1</td>
-		<td colspan="3" id="speed">EngineLordValue<h4>89</h4></td>
-			
-	</tr>
-	<tr>
-		<td>Button2</td>
-		<td colspan="2">x</td>
-		<td>x</td>
-		<td>총 주행시간<h4>04h 02m</h4></td>			
-	</tr>
-	<tr>		
-		<td>남은 기름<h3></h3></td>
-		<td>x</td>
-		<td>x</td>
-		<td>x</td>
-		<td>총 주행거리<h4>142.05km</h4></td>
-	</tr>
-	<tr>
-		<td colspan="2">Forward left<h3>34Psi</h3></td>
-		<td rowspan="2"><img src="../img/busgif.gif" style="width:auto;'"></td>
-		<td colspan="2">Forward right<h3>34Psi</h3></td>	
-	</tr>
-	<tr>
-		<td colspan="2">Back left<h3>34Psi</h3></td>
-		<td colspan="2">Back left<h3>34Psi</h3></td>	
-	</tr>
-	<tr>
-		<td colspan="5" style="text-align:center;">종합 현황<hr><h3>양호</h3></td>
-	</tr>
-</table>
+	    	 <div class="card-body">
+		<table >
+			<tr>
+				<td>Engine Lord Value(%)<h4 id="enginelordvalue"></h4>(normal scope: 0-35)</td>
+				<td rowspan="3"><jsp:include page="../bus/can.jsp"></jsp:include></td>
+				<td>enginRPM(rpm)<h4 id="enginRPM"></h4>(normal scope: ~13000)</td>
+			</tr>
+			<tr>
+				<td  id="speed"></td>
+				<td>MAF<h4 id="MAF"></h4></td>			
+			</tr>
+			<tr>		
+				<td>engineCoolantTemperature(c)<h3 id="engineCoolantTemperature"></h3>(normal scope: 96-110)</td>
+				<td>throttlePosition<h4 id="throttlePosition"></h4>(normal scope: ~98</td>
+			</tr>
+			<tr>
+				<td>Forward left<h3>34Psi</h3></td>
+				<td rowspan="2"><img src="../img/busgif.gif" style="width:100%;'"></td>
+				<td>Forward right<h3>34Psi</h3></td>	
+			</tr>
+			<tr>
+				<td>Back left<h3>34Psi</h3></td>
+				<td>Back left<h3>34Psi</h3></td>	
+			</tr>
+			<tr>
+				<td colspan="3" style="text-align:center;">종합 현황<hr> </td>
+			</tr>
+		</table>
+		</div>
 </div>
 </div>
 
@@ -174,11 +171,9 @@ td {
         </div>        
 </div>
 
-
-
-<!-- Trigger/Open The Modal -->
-<button id="myB22tn">Open Modal</button>
-
+  
+        
+        
 <!-- The Modal -->
 <div id="myModal" class="modal">
 
@@ -200,17 +195,39 @@ td {
 
 </body>
 <script>
+
+$(document).ready(function(){	 
+	can_ajax()
+});
+function can_ajax(){
+	$.ajax({			
+        url:'candata.do?busidx=${busidx}',
+        success:function(data){
+        	var a = JSON.parse(data);
+        	$("#enginelordvalue").html(a.engineLoadValue);
+        	$("#engineCoolantTemperature").html(a.engineCoolantTemperature);
+        	$("#enginRPM").html(a.enginRPM);
+        	$("#MAF").html(a.MAF);
+        	$("#throttlePosition").html(a.throttlePosition);
+        	
+         },
+        error:function(){
+           alert("fail")
+        }
+     });
+    setTimeout("can_ajax()",5000);
+}
+
+
 var a =1;
 function aa(){
 	var speed =Math.floor((Math.random() * 30) + 50);
 	$('#speed').html("EngineLordValue<h4>"+speed+"km/h</h4>")
 	if (a==1){
 		$('#speed').css("color","red");
-		$('#speed').css("font-size","120%");
 		a=2;
 	}else{
 		$('#speed').css("color","black");
-		$('#speed').css("font-size","100%");
 		a=1;
 	}
 	setTimeout("aa()",500);
@@ -235,11 +252,6 @@ $("a[name=myBtn]").click(function(){
 	var modal = $('#myModal')
 	var btn = $(this)
 	$("#itemName").html($(this).attr('id'))
-	
-	
-	
-	
-	
 	modal.css("display","block")
 })
 var modal = document.getElementById('myModal');

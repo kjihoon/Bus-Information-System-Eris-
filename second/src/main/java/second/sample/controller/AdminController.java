@@ -1,17 +1,13 @@
 package second.sample.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Qualifier;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,32 +161,27 @@ public class AdminController {
 	@RequestMapping(value="/admin/respeed.do", method=RequestMethod.GET)
 	@ResponseBody
 	public String respeed(CommandMap cmd) {
-		map.get(cmd.get("busidx")).set(10, (String) cmd.get("vehiclespeed"));
 		System.out.println(cmd.getMap().toString());
+		map.get(cmd.get("busidx")).set(10, (String) cmd.get("vehiclespeed"));
 		return "success";
 	}
 	
-	/*@RequestMapping(value="/admin/recandata.do", method=RequestMethod.POST)
+	
+	@RequestMapping(value="/admin/speed.do")
 	@ResponseBody
-	public String recandata(String engineLoadValue,String engineCoolantTemperature,String enginRPM,String vehicleSpeed,String MAF,String throttlePosition,String busidx ) {
-		
-		System.out.println(cmd.getMap().toString());
-		String engineLoadValue = (String) cmd.get("engineLoadValue");
-		String engineCoolantTemperature = (String) cmd.get("engineCoolantTemperature");
-		String enginRPM = (String) cmd.get("enginRPM");
-		String vehicleSpeed = (String) cmd.get("vehicleSpeed");
-		String MAF = (String) cmd.get("MAF");
-		String throttlePosition = (String) cmd.get("throttlePosition");
-		String busidx = (String) cmd.get("busidx");
-		map.get(busidx).set(4, engineLoadValue);
-		map.get(busidx).set(5, engineCoolantTemperature);
-		map.get(busidx).set(6, enginRPM);
-		map.get(busidx).set(7, vehicleSpeed);
-		map.get(busidx).set(8, MAF);
-		map.get(busidx).set(9, throttlePosition);
-		logmap.get("rolling"+busidx).debug("temp,"+busidx+","+engineLoadValue+"/"+engineCoolantTemperature+"/"+enginRPM+"/"+vehicleSpeed+"/"+MAF+"/"+throttlePosition);
-		return "success";		
-	}*/
+	public String speed(@RequestParam("busidx") String busidx) {
+		JSONObject vehiclespeed = new JSONObject();
+		vehiclespeed.put("vehiclespeed",map.get(busidx).get(10));
+		System.out.println("BUS"+busidx+vehiclespeed.toJSONString());
+		return vehiclespeed.toJSONString();
+	}
+	
+	@RequestMapping("/admin/busdash.do")
+	public String busdash(Model model,HttpSession session) {
+		model.addAttribute("center","busdash");
+		return "admin/main";
+	}
+	
 	
 	
 	@RequestMapping("/admin/candata.do")
@@ -215,8 +206,7 @@ public class AdminController {
 		public String location(@RequestParam("busidx") String busidx) throws Exception {
 			
 			//actual data
-			JSONObject location = new JSONObject();
-			
+			JSONObject location = new JSONObject();			
 			location.put("lat",map.get(busidx).get(0));
 			location.put("lng", map.get(busidx).get(1));
 			System.out.println("BUS"+busidx+location.toJSONString());
@@ -245,8 +235,6 @@ public class AdminController {
 	public String allbus(CommandMap cmd,Model model) throws Exception {
 		List<Map<String, Object>> allbus =busService.selectBusList(cmd.getMap());
 		model.addAttribute("allbus",allbus);
-
-		
 		return "admin/main";
 	}
 	//after login.. click main view
