@@ -13,8 +13,6 @@
 <input type="text" name="temp">
 	<input type="text" name="busidx">
 	<input type="submit">
-	
-
 </form>
 
 </div>

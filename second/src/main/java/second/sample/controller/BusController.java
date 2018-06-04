@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,7 +42,7 @@ public class BusController {
 			if (!map.get(busidx).get("control").equals("0")) {
 				System.out.println(map.get(busidx).toJSONString());
 				System.out.println(map.get(busidx).get("control"));
-				jo.put("control", map.get(busidx).get("control"));
+				jo.put("control", map.get(busidx).get("control"));				
 			}else {
 				jo.put("control", "0");
 				map.put(busidx, jo);
@@ -51,18 +52,25 @@ public class BusController {
 			jo.put("control", "0");
 			map.put(busidx,jo);
 		}
-		return jo.toJSONString();
+		JSONArray jr = new JSONArray();
+		jr.add(jo);
+		return jr.toJSONString();
 	}
+	
 	@RequestMapping("/admin/selfcontroll.do")
+	@ResponseBody
 	public String selfcontroll(@RequestParam("busidx") String busidx,@RequestParam("temp") String temp) {
-		List<String> list = new ArrayList<>();
 		JSONObject jo = new JSONObject();
+		System.out.println("요청"+temp+"온도"+busidx);
+		 
 		if (map.get(busidx)!=null) {
 			jo.put("control", temp);
 			map.put(busidx, jo);
 		}else {
+			jo.put("controll", "운행중이 아닙니다.");
 			System.out.println("(self control)해당 버스가 운행중이 아닙니다.");
 		}
-		return "admin/recontrol";
+		
+		return jo.toJSONString();
 	}
 }

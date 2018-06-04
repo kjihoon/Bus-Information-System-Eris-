@@ -102,13 +102,21 @@ function aa(){
 }
 
 function addcard(msg){
+	
+	var dt = new Date();
+	var month = dt.getMonth()+1;
+	var day = dt.getDate();
+	var year = dt.getFullYear();
+	var hour = dt.getHours();
+    var min = dt.getMinutes();
+    var present =year+"년 "+month+"월 "+day+"일  "+hour+":"+min;
 	if(msg==1){
 		$(".msgsection").prepend(    		
 	    		"<div class='alert alert-info' name='tempdown'>"+
 			    "<div style='font-size:17px;'>"+
 			    "<i class='fa fa-comments-o'></i>"+
 			   "<strong>요청(승객)</strong>"+
-			  "<div class='alerttime'>hh:mm</div>"+
+			  "<div class='alerttime'>"+present+"</div>"+
 			  "<div class='msg'> <p><img class='tempdown'>승객이 <span style='font-size:130%;'>온도하강</span> 요청을 하였습니다.</p></div>"+
 			   "</div>"+
 			  "</div>"
@@ -120,7 +128,7 @@ function addcard(msg){
 			    "<div style='font-size:17px;'>"+
 			    "<i class='fa fa-comments-o'></i>"+
 			   "<strong>요청(승객)</strong>"+
-			  "<div class='alerttime'>hh:mm</div>"+
+			  "<div class='alerttime'>"+present+"</div>"+
 			  "<div class='msg'> <p><img class='tempup'>승객이 <span style='font-size:130%;'>온도상승</span> 요청을 하였습니다.</p></div>"+
 			   "</div>"+
 			  "</div>"
@@ -133,7 +141,7 @@ function addcard(msg){
 			    "<div style='font-size:17px;'>"+
 			    "<i class='fa fa-comments-o'></i>"+
 			   "<strong>요청(승객)</strong>"+
-			  "<div class='alerttime'>hh:mm</div>"+
+			  "<div class='alerttime'>"+present+"</div>"+
 			  "<div class='msg'> <p><img class='speeddown'>승객이 <span style='font-size:130%;'>속도감소</span> 요청을 하였습니다.</p></div>"+
 			   "</div>"+
 			  "</div>"
@@ -146,8 +154,8 @@ function addcard(msg){
 	    		    "<div style='font-size:17px;'>"+
 	    		    "<i class='fa fa-exclamation-triangle'></i>"+
 	    		   "<strong>긴급(승객)</strong>"+
-	    		  "<div class='alerttime'>hh:mm</div>"+
-	    		   "<div class='msg'><p class='importancemsg'><img class='alertmsg'>msg</p></div>"+
+	    		  "<div class='alerttime'>"+present+"</div>"+
+	    		   "<div class='msg'><p class='importancemsg'><img class='alertmsg'>범죄 발생</p></div>"+
 	    		   "</div>"+
 	    		  "</div>"
 	    		);
@@ -161,7 +169,7 @@ function addcard(msg){
 	    		    "<div style='font-size:17px;'>"+
 	    		    "<i class='fa fa-exclamation-triangle'></i>"+
 	    		   "<strong>긴급(관리자)</strong>"+
-	    		  "<div class='alerttime'>hh:mm</div>"+
+	    		  "<div class='alerttime'>"+present+"</div>"+
 	    		   "<div class='msg'><p class='importancemsg'><img class='alertmsg'>"+msg+"</p></div>"+
 	    		   "</div>"+
 	    		  "</div>"

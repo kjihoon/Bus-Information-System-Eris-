@@ -10,7 +10,48 @@
 	<script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
-    
+<<style>
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
+    left: 8%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+</style>    
     <c:choose>
 
 	    <c:when test="${busInfo.SERVICE !='1'}">
@@ -127,9 +168,29 @@
  			<div class="card-body">
  			  <div id="container2" style="height: 250px;"></div>
  			</div>		
- 			
  		</div>
  	</div>
+ 	
+ 	<div class="col-lg-4">
+        <!-- Example Notifications Card-->
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fa fa-bell-o"></i> ${busInfo.NUM } - 온도 제어</div>
+              <div class="card-body">
+ 			  
+ 			  	<form id="conForm">
+					<input type="text" name="temp">
+					<input type="hidden" name="busidx" value="${busInfo.BUSIDX}">
+					<input type="button" id="formBt" value="control">
+					<div id="success"></div>
+				</form>
+				
+				
+				<a name=myBtn href="#">실시간 온도 시각화</a>
+ 			</div>
+              </div>
+              </div>
+              
 </div>
 
 
@@ -140,10 +201,53 @@
     </c:choose>    
         
         
+
+
+      
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  
+  <div class="modal-content">
+    <span id="closeModal" class="close">&times;</span>
+     <div class="container-fluid">
+      <div class="card mb-3">
+  			<h2 id="itemName" style="text-align:center;"></h2>
+			<h4 id="itemName" style="text-align:center;">Result of Analysis</h4>
+			<img src="../img/Rplot01.png">
+			<img src="../img/Rplot02.png">
+    </div>
+    </div>
+  </div>
+
+</div>
         
 
             
 <script>
+$('#formBt').click(function(){
+	var formData = $("#conForm").serialize();
+	$.ajax({	
+			type : "GET",
+			url : "selfcontroll.do",
+			cache : false,
+			data : formData,		
+		success:function(data){
+			a = JSON.parse(data);
+			$('#success').text("온도제어가 성공적으로 이루어졌습니다.")
+			//alert(a)
+	    },
+	    error:function(){
+	  	       alert("fail")
+	  	}
+	})	
+});
+
+
+
+
+
 
 //init location (seoul center 37.541° 126.986°)
 window.lat =37.541;
@@ -440,4 +544,24 @@ function display(input){
 }
 
 </script>
+  <script>
   
+
+  $("a[name=myBtn]").click(function(){
+  	var modal = $('#myModal')
+  	var btn = $(this)
+  	$("#itemName").html($(this).attr('id'))
+  	modal.css("display","block")
+  })
+  var modal = document.getElementById('myModal');
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+  }
+  var span = document.getElementsByClassName("close")[0];
+  span.onclick = function() {
+      modal.style.display = "none";
+  }
+  
+  </script>
