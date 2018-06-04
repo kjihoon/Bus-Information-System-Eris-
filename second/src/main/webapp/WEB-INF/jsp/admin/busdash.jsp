@@ -185,7 +185,7 @@ td {
       <div class="card mb-3">
   			<h2 id="itemName" style="text-align:center;"></h2>
 			<h4 id="itemName" style="text-align:center;">Result of Analysis</h4>
-			
+			<img src="../img/Rplot.png">
     </div>
     </div>
   </div>
@@ -222,7 +222,7 @@ function can_ajax(){
 var a =1;
 function aa(){
 	var speed =Math.floor((Math.random() * 30) + 50);
-	$('#speed').html("EngineLordValue<h4>"+speed+"km/h</h4>")
+	$('#speed').html("EngineLordValue<h4>"+speed+"%</h4>")
 	if (a==1){
 		$('#speed').css("color","red");
 		a=2;
