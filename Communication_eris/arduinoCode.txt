@@ -1,0 +1,145 @@
+#include <Stepper.h>
+#include <Keypad.h>
+#include "DHT.h"
+#define DHTPIN 9
+#define DHTTYPE DHT11
+DHT dht(DHTPIN,DHTTYPE);
+const int stepsPerRevolution = 256;
+const int buzzer = 11;
+const int buttonPin = 12;
+const int led = 13;
+int buttonState = 0;
+int val = 0;
+const byte ROWS = 4;
+const byte COLS = 4;
+char keys[ROWS][COLS] = {
+  {'0','1','2','3'},
+  {'4','5','6','7'},
+  {'8','9','a','b'},
+  {'c','d','e','f'},
+};
+byte rowPins[ROWS] = {1,2,3,4};
+byte colPins[COLS] = {5,6,7,8};
+Keypad keypad = Keypad(makeKeymap(keys),rowPins,colPins,ROWS,COLS);
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(115200);
+  while(!Serial);
+  Serial.println("Enter LED Number 1 or 'x' to clear");
+  pinMode(buzzer,OUTPUT);
+  pinMode(buttonPin,INPUT);
+  pinMode(led,OUTPUT);
+  digitalWrite(led,LOW);
+}
+unsigned long current_time = 0;
+unsigned long bellpre_time = 0;
+unsigned long htpre_time = 0;
+unsigned long vpre_time = 0;
+int pre_y = 0;
+boolean buttonFlag = false;
+boolean firstFlag = false;
+boolean moterFlag = false;
+void loop() {
+  // put your main code here, to run repeatedly:
+  int y = (analogRead(A0) - 523) / 2;
+  //int y = analogRead(A0)/4;
+  val = y;
+  current_time = millis();
+  if(Serial.available())
+  {
+	char ch = Serial.read();
+	
+	if(ch == '1')
+	{
+  	digitalWrite(led,HIGH);
+  	//Serial.print(" Turned on LED");
+  	Serial.print(" W28111111111111111111111111");
+	}else if(ch == '0')
+	{
+  	digitalWrite(led,LOW);
+  	//Serial.print(" Turned off LED");
+  	Serial.print(" W28000000000000000000000000");
+	}else if(ch == 'h'){
+  	getTemp();
+	}else if(ch == 's'){
+  	Serial.print(" v=" + String(val));
+	}else if(ch == 'b'){
+  	buttonFlag = true;
+  	firstFlag = true;
+  	bellpre_time = current_time;
+  	//buzzeron();
+  	Serial.print(" b");
+	}
+	ch = 'x';
+  }
+  char key = keypad.getKey();
+  if(key){
+	Serial.println(" key=" + String(key));
+  }
+ 
+  if(current_time - htpre_time > 5000){
+	getTemp();
+	htpre_time = current_time;
+  }
+  //if(y != pre_y){
+  //  Serial.print("v=" + String(val));
+  //  pre_y = y;
+  //}
+  if(current_time - vpre_time > 100){
+   Serial.print(" v=" + String(val));
+	vpre_time = current_time;
+  }
+  if(buttonFlag){
+	if(current_time - bellpre_time < 600){
+  	if(firstFlag){
+    	digitalWrite(buzzer,HIGH);
+    	digitalWrite(led,HIGH);
+    	firstFlag = false;
+    	
+  	}
+  	digitalWrite(buzzer,HIGH);
+  	delayMicroseconds(2000);
+	}else{
+  	buttonFlag = false;
+  	digitalWrite(buzzer,LOW);
+	}
+  }
+
+  buzzerFunction();
+}
+void getTemp(){
+  int h = dht.readHumidity();
+  int t = dht.readTemperature();
+  String humidity = String(h);
+  String temperature = String(t);
+  if(h<10){
+	humidity = "0"+humidity;
+  }
+  if(t<10){
+	temperature = "0"+temperature;
+  }
+  Serial.print(" h=" + humidity + "t=" + temperature);
+}
+void buzzerFunction(){
+  buttonState = digitalRead(buttonPin);
+  if(buttonState == HIGH){
+	//digitalWrite(buzzer,HIGH);
+	//digitalWrite(led,HIGH);
+	digitalWrite(led,LOW);
+	//delayMicroseconds(500);
+	//digitalWrite(buzzer,LOW);
+	//delayMicroseconds(500);
+  }
+  else{
+	digitalWrite(buzzer,LOW);
+  }
+}
+void buzzeron(){
+  digitalWrite(buzzer,HIGH);
+  digitalWrite(led,HIGH);
+  delay(600);
+  digitalWrite(buzzer,LOW);
+}
+
+
+
